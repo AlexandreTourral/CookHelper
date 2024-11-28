@@ -1,0 +1,48 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependency directories
+node_modules/
+
+# Build output
+dist/
+.vite/
+
+# Static files cache
+.cache/
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Firebase
+firebase-debug.log
+.firebaserc
+
+# Testing
+coverage/
+*.lcov
+
+# Miscellaneous
+*.lock
+
+# Optional npm cache
+.npm
+.pnpm-store
