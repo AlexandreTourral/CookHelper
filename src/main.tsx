@@ -1,13 +1,19 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.tsx'
-import { FirebaseProvider } from './context/firebaseContext.tsx'
+import { ThemeProvider } from '@mui/material/styles';
+import './index.css';
+import App from './App.tsx';
+import { FirebaseProvider } from './context/firebaseContext.tsx';
+import { theme } from './ui/theme/theme.ts';
+import { CssBaseline } from '@mui/material';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <FirebaseProvider>
-      <App />
-    </FirebaseProvider>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <FirebaseProvider>
+        <App />
+      </FirebaseProvider>
+    </ThemeProvider>
   </StrictMode>,
 )

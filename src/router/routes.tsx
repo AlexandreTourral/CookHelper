@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import { Layout } from "../ui/components";
-import { HomePage } from "../ui/pages";
+import { HomePage, SignUpPage } from "../ui/pages";
 
 export const router = createBrowserRouter([
   {
@@ -10,6 +10,12 @@ export const router = createBrowserRouter([
       {
         path: "",
         element: <HomePage />,
+        loader: async () => {
+        },
+      },
+      {
+        path: "SignUp",
+        element: <SignUpPage />,
         loader: async () => {
         },
       },
