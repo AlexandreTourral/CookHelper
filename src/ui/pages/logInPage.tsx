@@ -1,28 +1,34 @@
 import { useState } from "react";
-import { signUpUser } from "../../hooks";
-import { Button, TextField } from "@mui/material";
+import { LogInUser } from "../../hooks";
+import { Button, TextField, Typography } from "@mui/material";
+import { ErrorSnackbar } from "../components";
 import { useNavigate } from "react-router-dom";
 
-export function SignUpPage() {
+export function LogInPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // const [confirmPassword, setConfirmPassword] = useState();
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate()
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); 
     try {
-      signUpUser(email, password)
+      await LogInUser(email, password)
       setEmail('')
       setPassword('')
       navigate("/dashboard")
     } catch (e: any) {
-      console.error(e.message)
+      setErrorMessage("L'email ou le mot de passe contient une erreur.")
+      setSnackbarOpen(true)
+      setPassword('')
+      return;
     }
   }
   
   return (
     <div>
+      <Typography variant="h2" className="text-center"> Se connecter </Typography>
       <form onSubmit={handleSubmit}>
       <TextField
           label="Email"
@@ -47,6 +53,7 @@ export function SignUpPage() {
         <Button type="submit" variant="contained" color="secondary">
           Valider
         </Button>
+        <ErrorSnackbar message={errorMessage} open={snackbarOpen} onClose={() => setSnackbarOpen(false)} />
       </form>
     </div>
   )
