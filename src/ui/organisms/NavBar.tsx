@@ -1,8 +1,17 @@
 import { useTheme } from "@emotion/react";
-import { AppBar, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
+import LogoutIcon from '@mui/icons-material/Logout';
+import { AuthStore } from "../../store/UserStore";
+import { useObservable } from "@ngneat/react-rxjs";
 
 export function NavBar() {
   const theme = useTheme();
+  const user = useObservable(AuthStore, (state) => state.user);
+
+  const handleLogOut = () => {
+    localStorage.removeItem("jwt");
+    window.location.reload();
+  }
 
   return (
     <AppBar
@@ -26,6 +35,12 @@ export function NavBar() {
         >
           WeeKooK
         </Typography>
+        { user[0].user?.isConnected
+          ? <Button color="inherit" onClick={handleLogOut}>
+              <LogoutIcon />
+            </Button>
+          : null
+        } 
       </Toolbar>
     </AppBar>
   )
