@@ -21,7 +21,7 @@ export function LogInPage() {
       setEmail('')
       setPassword('')
       updateAuthStore(true)
-      navigate("/dashboard")
+      navigate("/weekook/dashboard")
     } catch (e: any) {
       setErrorMessage("L'email ou le mot de passe contient une erreur.")
       setSnackbarOpen(true)

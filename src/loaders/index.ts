@@ -1,1 +1,1 @@
-export * from './dashboard.loader'
+export * from './weekook.loader'

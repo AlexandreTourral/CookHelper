@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import { Layout } from "../ui/components";
-import { Dashboard, HomePage, LogInPage, SignUpPage } from "../ui/pages";
-import { dashboardLoader } from "../loaders";
+import { Dashboard, HomePage, LogInPage, Menu, SignUpPage, Weekook } from "../ui/pages";
+import { weekookLoader } from "../loaders";
 
 export const router = createBrowserRouter([
   {
@@ -27,9 +27,23 @@ export const router = createBrowserRouter([
         },
       },
       {
-        path: "dashboard",
-        element: <Dashboard />,
-        loader: dashboardLoader,
+        path: "weekook",
+        element: <Weekook />,
+        loader: weekookLoader,
+        children: [
+          {
+            path: "dashboard",
+            element: <Dashboard />,
+          },
+          {
+            path: "menu",
+            element: <Menu />,
+          },
+          {
+            path: "planning",
+            element: <Dashboard />,
+          },
+        ]
       },
     ],
   },

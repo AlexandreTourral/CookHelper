@@ -26,7 +26,7 @@ export function SignUpPage() {
       setPassword('')
       setConfirmPassword('')
       updateAuthStore(true)
-      navigate("/dashboard")
+      navigate("/weekook/dashboard")
     } catch (e: any) {
       console.error(e)
     }

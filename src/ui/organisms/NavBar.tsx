@@ -1,11 +1,11 @@
-import { useTheme } from "@emotion/react";
-import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
+
+import { AppBar, Button, Toolbar, Typography } from "@mui/material";
 import LogoutIcon from '@mui/icons-material/Logout';
 import { AuthStore } from "../../store/UserStore";
 import { useObservable } from "@ngneat/react-rxjs";
+import { theme } from "../theme";
 
 export function NavBar() {
-  const theme = useTheme();
   const user = useObservable(AuthStore, (state) => state.user);
 
   const handleLogOut = () => {
