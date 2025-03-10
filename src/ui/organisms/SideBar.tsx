@@ -18,7 +18,7 @@ export function SideBar() {
   }
 
   return (
-    <Box sx={{ backgroundColor: theme.palette.background.paper, borderRadius: "16px", width: "fit-content", padding: "16px" }}>
+    <Box sx={{ backgroundColor: theme.palette.background.paper, borderRadius: "16px", border: "solid 1px", borderColor: theme.palette.secondary.main, width: "fit-content", padding: "16px" }}>
       <Stack direction={"column"} spacing={3} sx={{ alignItems: "flex-start" }}>
         <Typography component={"button"} variant="h5" onClick={handleDashboardNavigation} sx={{ cursor: "pointer" }}>
           Dashboard

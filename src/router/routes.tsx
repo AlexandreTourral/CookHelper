@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import { Layout } from "../ui/components";
 import { Dashboard, HomePage, LogInPage, Menu, SignUpPage, Weekook } from "../ui/pages";
-import { weekookLoader } from "../loaders";
+import { menuLoader, weekookLoader } from "../loaders";
 
 export const router = createBrowserRouter([
   {
@@ -37,6 +37,7 @@ export const router = createBrowserRouter([
           },
           {
             path: "menu",
+            loader: menuLoader,
             element: <Menu />,
           },
           {

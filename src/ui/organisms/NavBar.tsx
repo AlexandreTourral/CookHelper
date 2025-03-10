@@ -4,12 +4,13 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { AuthStore } from "../../store/UserStore";
 import { useObservable } from "@ngneat/react-rxjs";
 import { theme } from "../theme";
+import { logOutUser } from "../../hooks/logOutUser";
 
 export function NavBar() {
   const user = useObservable(AuthStore, (state) => state.user);
 
   const handleLogOut = () => {
-    localStorage.removeItem("jwt");
+    logOutUser()
     window.location.reload();
   }
 

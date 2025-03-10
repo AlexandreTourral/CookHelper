@@ -1,8 +1,14 @@
-export function isUserConnected() {
-  const jwt = localStorage.getItem("jwt");
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase";
 
-  if (jwt !== null)
-    return true
-  else
-    return false
+export function isUserConnected(): Promise<boolean> {
+  return new Promise((resolve) => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        resolve(true);
+      } else {
+        resolve(false);
+      }
+    });
+  });
 }

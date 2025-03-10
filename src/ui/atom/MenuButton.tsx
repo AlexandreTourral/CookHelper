@@ -1,0 +1,53 @@
+import { Button, Stack } from "@mui/material";
+import AddBoxIcon from '@mui/icons-material/AddBox';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import { ModalNewMeal } from "../organisms";
+import { RecipeApi } from "../../firebase/recettesApi";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { MenuStore, resetMenu, updateMenuStatus } from "../../store";
+import { useObservable } from "@ngneat/react-rxjs";
+import DeleteIcon from '@mui/icons-material/Delete';
+
+export function MenuButton() {
+  const [modalState, setModalState] = useState(false);
+  const navigate = useNavigate();
+  const menuStore = useObservable(MenuStore, (state) => state.isDeleting)
+
+  const handleSubmitForm = (name: string) => {
+    setModalState(false);
+    RecipeApi.addRecipes(name)
+    navigate(".", { replace: true });
+  }
+
+  const handleRemoveMeal = () => {
+    RecipeApi.removeRecipes(menuStore[0].deleteItem)
+    resetMenu()
+    navigate(".", { replace: true });
+  }
+
+  return (
+    <Stack direction={"row"} spacing={2} sx={{ alignSelf: "end" }}>
+      { menuStore[0].isDeleting
+        ? <Button variant="contained" color="primary" onClick={handleRemoveMeal} sx={{ width: "fit-content", gap: "8px" }}>
+            <DeleteIcon />
+          </Button>
+        : null  
+      }
+      <Button variant="contained" color="primary" onClick={() => setModalState(true)} sx={{ width: "fit-content", gap: "8px" }}>
+        Ajouter un plat
+        <AddBoxIcon />
+      </Button>
+      { menuStore[0].isDeleting
+        ? <Button variant="contained" color="secondary" onClick={resetMenu} sx={{ width: "fit-content", gap: "8px" }}>
+            Annuler
+          </Button>
+        : <Button variant="contained" color="primary" onClick={updateMenuStatus} sx={{ width: "fit-content", gap: "8px" }}>
+            Supprimer un plat
+            <RemoveCircleOutlineIcon />
+          </Button>
+      }
+      <ModalNewMeal onClose={() => setModalState(false)} open={modalState} onSubmit={(name: string) => handleSubmitForm(name)} />
+    </Stack>
+  )
+}
