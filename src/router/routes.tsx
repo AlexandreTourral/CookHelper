@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import { Layout } from "../ui/components";
-import { Dashboard, HomePage, LogInPage, Menu, SignUpPage, Weekook } from "../ui/pages";
-import { menuLoader, weekookLoader } from "../loaders";
+import { Collection, Dashboard, HomePage, LogInPage, Menu, SignUpPage, Weekook } from "../ui/pages";
+import { collectionLoader, menuLoader, weekookLoader } from "../loaders";
 
 export const router = createBrowserRouter([
   {
@@ -44,6 +44,11 @@ export const router = createBrowserRouter([
             path: "planning",
             element: <Dashboard />,
           },
+          {
+            path: "collection",
+            element: <Collection />,
+            loader: collectionLoader,
+          }
         ]
       },
     ],

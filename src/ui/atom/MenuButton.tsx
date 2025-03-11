@@ -1,13 +1,15 @@
 import { Button, Stack } from "@mui/material";
-import AddBoxIcon from '@mui/icons-material/AddBox';
-import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import { ModalNewMeal } from "../organisms";
 import { RecipeApi } from "../../firebase/recettesApi";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { MenuStore, resetMenu, updateMenuStatus } from "../../store";
 import { useObservable } from "@ngneat/react-rxjs";
+
+import AddBoxIcon from '@mui/icons-material/AddBox';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
+import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 
 export function MenuButton() {
   const [modalState, setModalState] = useState(false);
@@ -34,6 +36,10 @@ export function MenuButton() {
           </Button>
         : null  
       }
+      <Button variant="contained" color="primary" onClick={() => navigate("/weekook/collection")} sx={{ width: "fit-content", gap: "8px" }}>
+        Collection
+        <LibraryBooksIcon />
+      </Button>
       <Button variant="contained" color="primary" onClick={() => setModalState(true)} sx={{ width: "fit-content", gap: "8px" }}>
         Ajouter un plat
         <AddBoxIcon />
