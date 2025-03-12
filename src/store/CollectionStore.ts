@@ -1,13 +1,15 @@
 import { createStore, withProps } from '@ngneat/elf';
+import { arrayUnion } from 'firebase/firestore';
 
 export interface CollectionProps {
   deleteItem: string[];
   isDeleting: boolean;
+  meals: string[];
 }
 
 export const CollectionStore = createStore(
   { name: 'collection' },
-  withProps<CollectionProps>({ deleteItem: [], isDeleting: false })
+  withProps<CollectionProps>({ deleteItem: [], isDeleting: false, meals: [] })
 );
 
 export function updateCollectionStatus() {
@@ -24,6 +26,20 @@ export function addCollection(newItem: string) {
   }))
 }
 
+export function addMealToCollection(newMeal: string) {
+  CollectionStore.update((state) => ({
+    ...state,
+    meals: [...CollectionStore.value.meals, newMeal]
+  }))
+}
+
+export function removeMealFromCollection(meal: string) {
+  CollectionStore.update((state) => ({
+    ...state,
+    meals: CollectionStore.value.meals.splice(CollectionStore.value.meals.indexOf(meal), 1)
+  }))
+}
+
 export function removeCollection(item: string) {
   CollectionStore.update((state) => ({
     ...state, 
@@ -35,6 +51,10 @@ export function resetCollection() {
   CollectionStore.update((state) => ({
     ...state,
     isDeleting: false,
-    deleteItem: []
+    deleteItem: [],
+    meals: [],
   }))
-} 
+}
+
+
+

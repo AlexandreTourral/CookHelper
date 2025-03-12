@@ -18,10 +18,17 @@ export class CollectionApi {
     }
   }
 
-  static async addMealToCollection(meal: string, collection: string) {
+  static async addMealToCollection(meals: string[], collection: string) {
     const collectionRef = doc(db, "Collections", "collections");
     await updateDoc(collectionRef, {
-      [collection]: arrayUnion(meal)
+      [collection]: arrayUnion(...meals)
+    })
+  }
+
+  static async removeMealFromCollection(meals: string[], collection: string) {
+    const collectionRef = doc(db, "Collections", "collections");
+    await updateDoc(collectionRef, {
+      [collection]: arrayRemove(...meals)
     })
   }
 
