@@ -9,6 +9,7 @@ type modalMealToCollectionProps = {
   onClose: () => void
   onSubmit: () => void
   meals?: string[]
+  title?: string
 }
 
 const style = {
@@ -22,7 +23,7 @@ const style = {
   p: 4,
 };
 
-export function ModalMealToCollection({ open, onClose, onSubmit, meals }: modalMealToCollectionProps) {
+export function ModalMealToCollection({ open, onClose, onSubmit, meals, title = "🥞 Ajouter un plât à la Collection 📋" }: modalMealToCollectionProps) {
   const [mealList, setMealList] = useState<string[]>([])
   
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -49,7 +50,7 @@ export function ModalMealToCollection({ open, onClose, onSubmit, meals }: modalM
         <form onSubmit={handleSubmit} >
           <Stack spacing={4} sx={{ alignItems: "center" }}>
             <Typography variant="h5" >
-              🥞 Ajouter un plât à la Collection 📋
+              {title}
             </Typography>
             <MenuListForCollection recipes={meals ? meals : mealList} />
             <Button type="submit" variant="contained" color="secondary">

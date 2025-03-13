@@ -99,7 +99,7 @@ export function CollectionCard({ collectionKey, collectionsList }: CollectionCar
         </AccordionDetails>
       </Accordion>
       <ModalMealToCollection onClose={() => setModalMealToCollectionState(false)} onSubmit={handleSubmitedModal} open={isModalMealToCollectionOpen} />
-      <ModalMealToCollection onClose={() => setModalRemoveMealFromCollectionState(false)} onSubmit={handleSubmitedRemoveModal} open={isModalRemoveMealFromCollectionOpen} />
+      <ModalMealToCollection title="🥞 Supprimer un plât de la Collection 📋" meals={collectionsList[collectionKey]} onClose={() => setModalRemoveMealFromCollectionState(false)} onSubmit={handleSubmitedRemoveModal} open={isModalRemoveMealFromCollectionOpen} />
     </Stack>
   )
 }
