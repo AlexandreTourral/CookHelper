@@ -5,4 +5,4 @@ export type recipeType = {
 
 export type mealType = {
   recipes: recipeType,
-} 
+}
