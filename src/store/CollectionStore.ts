@@ -1,5 +1,4 @@
 import { createStore, withProps } from '@ngneat/elf';
-import { arrayUnion } from 'firebase/firestore';
 
 export interface CollectionProps {
   deleteItem: string[];

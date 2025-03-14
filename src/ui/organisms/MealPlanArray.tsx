@@ -1,7 +1,26 @@
 import { Grid2, Stack, Typography } from "@mui/material";
 import { theme } from "../theme";
+import { useEffect, useState } from "react";
+import { PlanningApi } from "../../firebase";
+import { PlanningMealCard } from "../atom";
+import { useObservable } from "@ngneat/react-rxjs";
+import { PlanningStore } from "../../store";
 
 export function MealPlanArray() {
+  const planninStore = useObservable(PlanningStore)
+  const [lunchMeal, setLunchMeal] = useState<string[]>([])
+  const [dinerMeal, setDinerMeal] = useState<string[]>([])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const {lunch, diner} = await PlanningApi.getWeekPlan()
+      setLunchMeal(lunch)
+      setDinerMeal(diner)
+    }
+
+    fetchData()
+  }, [planninStore[0].reloader])
+
   return (
     <Stack sx={{ marginTop: "16px" }}>
       <Grid2 container spacing={0} sx={{ '--Grid-borderWidth': '1px',
@@ -84,41 +103,9 @@ export function MealPlanArray() {
             Déjeuner
           </Typography>
         </Grid2>
-        <Grid2 size="grow" >
-          <Typography>
-            Pas de repas prévu
-          </Typography>
-        </Grid2>
-        <Grid2 size="grow" >
-          <Typography>
-            Pas de repas prévu
-          </Typography>
-        </Grid2>
-        <Grid2 size="grow" >
-          <Typography>
-            Pas de repas prévu
-          </Typography>
-        </Grid2>
-        <Grid2 size="grow" >
-          <Typography>
-            Pas de repas prévu
-          </Typography>
-        </Grid2>
-        <Grid2 size="grow" >
-          <Typography>
-            Pas de repas prévu
-          </Typography>
-        </Grid2>
-        <Grid2 size="grow" >
-          <Typography>
-            Pas de repas prévu
-          </Typography>
-        </Grid2>
-        <Grid2 size="grow" >
-          <Typography>
-            Pas de repas prévu
-          </Typography>
-        </Grid2>
+        { lunchMeal.map((lunch, index) => (
+          <PlanningMealCard key={lunch + index} meal={lunch} type="lunch" day={index} />
+        ))}
       </Grid2>
       <Grid2 container
         sx={{
@@ -144,41 +131,9 @@ export function MealPlanArray() {
             Diner
           </Typography>
         </Grid2>
-        <Grid2 size="grow" >
-          <Typography>
-            Pas de repas prévu
-          </Typography>
-        </Grid2>
-        <Grid2 size="grow" >
-          <Typography>
-            Pas de repas prévu
-          </Typography>
-        </Grid2>
-        <Grid2 size="grow" >
-          <Typography>
-            Pas de repas prévu
-          </Typography>
-        </Grid2>
-        <Grid2 size="grow" >
-          <Typography>
-            Pas de repas prévu
-          </Typography>
-        </Grid2>
-        <Grid2 size="grow" >
-          <Typography>
-            Pas de repas prévu
-          </Typography>
-        </Grid2>
-        <Grid2 size="grow" >
-          <Typography>
-            Pas de repas prévu
-          </Typography>
-        </Grid2>
-        <Grid2 size="grow" >
-          <Typography>
-            Pas de repas prévu
-          </Typography>
-        </Grid2>
+        { dinerMeal.map((diner, index) => (
+          <PlanningMealCard key={diner + index} meal={diner} type="diner" day={index} />
+        ))}
       </Grid2>
     </Stack>
   )

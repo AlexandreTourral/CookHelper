@@ -6,9 +6,11 @@ export class PlanningApi {
   static weekDays = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi" ,"Dimanche"];
 
   static async getWeekPlan() {
-    const querySnapshot = await getDocs(collection(db, "Planning", "Menu"));
-    const collections = querySnapshot.docs.map(doc => ({ ...doc.data() }));
-    return collections as Record<string, Record<string, string>>[];
+    const querySnapshot = await getDocs(collection(db, "Planning"));
+    const weekPlan = querySnapshot.docs.map(doc => ({ ...doc.data() as Record<string, DayMealType> }));
+    const lunch = this.weekDays.map((day: string) => weekPlan[0][day].lunch)
+    const diner = this.weekDays.map((day: string) => weekPlan[0][day].diner)
+    return {lunch, diner}
   }
 
   static async addMealToDay(day: string, meal: DayMealType) {
@@ -29,46 +31,28 @@ export class PlanningApi {
     }
   }
 
-  static async addCollection(name: string) {
+  static async updateMealToDay(dayindex: number, meal: string, state: string) {
     try {
-      const collectionRef = doc(db, "Collections", "collections");
-      await updateDoc(collectionRef, { [name]: [] } );
-      await updateDoc(collectionRef, { key: arrayUnion(name) } )
+      const day = this.weekDays[dayindex];
+      const querySnapshot = await getDocs(collection(db, "Planning"));
+      const weekPlan = querySnapshot.docs.map(doc => ({ ...doc.data() as Record<string, DayMealType> }))[0];
+      const planningRef = doc(db, "Planning", "Menu");
+
+      if (state === "lunch") {
+        const diner = weekPlan[day].diner
+        await updateDoc(planningRef, { [day]: { lunch: meal, diner} });
+      } else if (state === "diner") {
+        const lunch = weekPlan[day].lunch
+        await updateDoc(planningRef, { [day]: { lunch, diner: meal} });
+      } else {
+        await updateDoc(planningRef, { [day]: { lunch: "Pas de repas prévu" , diner: "Pas de repas prévu"} });
+      }
+      console.log("repas modifié avec succés")
     } catch (error) {
-      console.error("Erreur lors de l'ajout de la collection :", error);
+      console.error(error);
     }
   }
-
-  static async addMealToCollection(meals: string[], collection: string) {
-    const collectionRef = doc(db, "Collections", "collections");
-    await updateDoc(collectionRef, {
-      [collection]: arrayUnion(...meals)
-    })
-  }
-
-  static async removeMealFromCollection(meals: string[], collection: string) {
-    const collectionRef = doc(db, "Collections", "collections");
-    await updateDoc(collectionRef, {
-      [collection]: arrayRemove(...meals)
-    })
-  }
-
-  static async removeCollections(names: string[]) {
-    try {
-      await Promise.all(
-        names.map(async (name) => {
-          const docRef = doc(db, "Collections", "collections");
-          await updateDoc(docRef, {
-            [name]: deleteField(),
-            key: arrayRemove(name)
-          })
-        })
-      );
-    } catch (error) {
-        console.error("Erreur lors de la suppression de la collection :", error);
-    }
-  }
-
+  
 }
 
 

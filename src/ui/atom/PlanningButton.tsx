@@ -3,7 +3,7 @@ import { ModalNewMeal } from "../organisms";
 import { RecipeApi } from "../../firebase/recettesApi";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { MenuStore, resetMenu, updateMenuStatus } from "../../store";
+import { PlanningStore, reloadPlanning, resetMenu, updateMenuStatus, updatePlanningStatus } from "../../store";
 import { useObservable } from "@ngneat/react-rxjs";
 
 import AddBoxIcon from '@mui/icons-material/AddBox';
@@ -16,7 +16,7 @@ import { DayMealType } from "../../type/menuType";
 export function PlanningButton() {
   const [modalState, setModalState] = useState(false);
   const navigate = useNavigate();
-  const menuStore = useObservable(MenuStore, (state) => state.isDeleting)
+  const planningStore = useObservable(PlanningStore, (state) => state.isDeleting)[0]
 
   const handleSubmitForm = (name: string) => {
     setModalState(false);
@@ -24,7 +24,7 @@ export function PlanningButton() {
     navigate(".", { replace: true });
   }
 
-  const handleAddMeal = () => {
+  const handleAddMeal = async () => {
     const weekMeals: Record<string, DayMealType> = {
       "Lundi": { "lunch": "repas du lundi midi", "diner": "repas du lundi soir" },
       "Mardi": { "lunch": "repas du mardi midi", "diner": "repas du mardi soir" },
@@ -34,7 +34,8 @@ export function PlanningButton() {
       "Samedi": { "lunch": "repas du lundi samedi", "diner": "repas du samedi soir" },
       "Dimanche": { "lunch": "repas du lundi dimanche", "diner": "repas du dimanche soir" },
     };
-    PlanningApi.addWeekMeals(weekMeals)
+    await PlanningApi.addWeekMeals(weekMeals);
+    reloadPlanning();
   }
 
   return (
@@ -42,6 +43,14 @@ export function PlanningButton() {
       <Button variant="contained" color="primary" onClick={handleAddMeal} sx={{ width: "fit-content", gap: "8px" }}>
         Générer les menus
       </Button>
+      {planningStore.isDeleting
+        ? <Button variant="contained" color="primary" onClick={updatePlanningStatus} sx={{ width: "fit-content", gap: "8px" }}>
+            OK
+          </Button>
+        : <Button variant="contained" color="primary" onClick={updatePlanningStatus} sx={{ width: "fit-content", gap: "8px" }}>
+            Supprimer un plat
+          </Button>
+      }
       <ModalNewMeal onClose={() => setModalState(false)} open={modalState} onSubmit={(name: string) => handleSubmitForm(name)} />
     </Stack>
   )
