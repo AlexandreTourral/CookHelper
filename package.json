@@ -13,6 +13,7 @@
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
     "@fontsource/poppins": "^5.2.5",
+    "@google/generative-ai": "^0.24.0",
     "@mui/icons-material": "^6.1.10",
     "@mui/material": "^6.1.10",
     "@ngneat/effects": "^2.1.2",
@@ -27,7 +28,9 @@
     "@ngneat/elf-requests": "^1.9.2",
     "@ngneat/elf-state-history": "^1.4.0",
     "@ngneat/react-rxjs": "^1.1.0",
+    "axios": "^1.8.3",
     "firebase": "^11.0.2",
+    "openai": "^4.87.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.0.1"

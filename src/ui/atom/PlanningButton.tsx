@@ -3,20 +3,17 @@ import { ModalNewMeal } from "../organisms";
 import { RecipeApi } from "../../firebase/recettesApi";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { PlanningStore, reloadPlanning, resetMenu, updateMenuStatus, updatePlanningStatus } from "../../store";
+import { PlanningStore, reloadPlanning, updatePlanningStatus } from "../../store";
 import { useObservable } from "@ngneat/react-rxjs";
 
-import AddBoxIcon from '@mui/icons-material/AddBox';
-import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
-import DeleteIcon from '@mui/icons-material/Delete';
-import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import { PlanningApi } from "../../firebase";
 import { DayMealType } from "../../type/menuType";
+import { selectMeals } from "../../API/geminiAI";
 
 export function PlanningButton() {
   const [modalState, setModalState] = useState(false);
   const navigate = useNavigate();
-  const planningStore = useObservable(PlanningStore, (state) => state.isDeleting)[0]
+  const planningStore = useObservable(PlanningStore)[0]
 
   const handleSubmitForm = (name: string) => {
     setModalState(false);
@@ -25,15 +22,17 @@ export function PlanningButton() {
   }
 
   const handleAddMeal = async () => {
-    const weekMeals: Record<string, DayMealType> = {
-      "Lundi": { "lunch": "repas du lundi midi", "diner": "repas du lundi soir" },
-      "Mardi": { "lunch": "repas du mardi midi", "diner": "repas du mardi soir" },
-      "Mercredi": { "lunch": "repas du mercredi midi", "diner": "repas du mercredi soir" },
-      "Jeudi": { "lunch": "repas du jeudi midi", "diner": "repas du jeudi soir" },
-      "Vendredi": { "lunch": "repas du vendredi midi", "diner": "repas du vendredi soir" },
-      "Samedi": { "lunch": "repas du lundi samedi", "diner": "repas du samedi soir" },
-      "Dimanche": { "lunch": "repas du lundi dimanche", "diner": "repas du dimanche soir" },
-    };
+    // const weekMeals: Record<string, DayMealType> = {
+    //   "Lundi": { "lunch": "repas du lundi midi", "diner": "repas du lundi soir" },
+    //   "Mardi": { "lunch": "repas du mardi midi", "diner": "repas du mardi soir" },
+    //   "Mercredi": { "lunch": "repas du mercredi midi", "diner": "repas du mercredi soir" },
+    //   "Jeudi": { "lunch": "repas du jeudi midi", "diner": "repas du jeudi soir" },
+    //   "Vendredi": { "lunch": "repas du vendredi midi", "diner": "repas du vendredi soir" },
+    //   "Samedi": { "lunch": "repas du samedi midi", "diner": "repas du samedi soir" },
+    //   "Dimanche": { "lunch": "repas du dimanche midi", "diner": "repas du dimanche soir" },
+    // };
+    const weekMeals = await selectMeals();
+    console.log(weekMeals);
     await PlanningApi.addWeekMeals(weekMeals);
     reloadPlanning();
   }

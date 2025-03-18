@@ -3,7 +3,7 @@ import { db } from "./firebaseConfig";
 import { DayMealType } from "../type/menuType";
 
 export class PlanningApi {
-  static weekDays = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi" ,"Dimanche"];
+  static weekDays = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi" ,"dimanche"];
 
   static async getWeekPlan() {
     const querySnapshot = await getDocs(collection(db, "Planning"));
