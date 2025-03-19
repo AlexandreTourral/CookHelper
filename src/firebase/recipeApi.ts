@@ -1,7 +1,7 @@
 import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 import { getWeekookSubCollections } from "./collectionApi";
-import { ingredient, recipeType } from "../type/recipeType";
+import { ingredient } from "../type/recipeType";
 
 export class RecipeApi {
   static async getRecipe() {

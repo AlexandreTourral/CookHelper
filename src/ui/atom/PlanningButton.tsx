@@ -8,7 +8,7 @@ import { useObservable } from "@ngneat/react-rxjs";
 
 import { PlanningApi } from "../../firebase";
 import { selectMeals } from "../../API/geminiAI";
-import { generateShoppingList, generateShoppingListPDF } from "../../hooks";
+import { generateShoppingListPDF } from "../../hooks";
 
 export function PlanningButton() {
   const [modalState, setModalState] = useState(false);

@@ -1,10 +1,9 @@
 import { Button, Stack } from "@mui/material";
-import { ModalNewMeal, ModalNewRecipe } from "../organisms";
+import { ModalNewRecipe } from "../organisms";
 import { MenuApi } from "../../firebase/menuApi";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { MenuStore, resetMenu, updateMenuStatus } from "../../store";
-import { useObservable } from "@ngneat/react-rxjs";
+import { updateMenuStatus } from "../../store";
 
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
@@ -14,18 +13,11 @@ import { RecipeStore } from "../../store/RecipeStore";
 export function RecettesButton() {
   const [modalState, setModalState] = useState(false);
   const navigate = useNavigate();
-  const menuStore = useObservable(MenuStore);
 
   const handleSubmitForm =  async (name: string) => {
     setModalState(false);
     await MenuApi.addMenu(name);
     await RecipeApi.addRecipe(RecipeStore.value.ingredient, name);
-    navigate(".", { replace: true });
-  }
-
-  const handleRemoveMeal = () => {
-    MenuApi.removeMenu(menuStore[0].deleteItem);
-    resetMenu();
     navigate(".", { replace: true });
   }
 
