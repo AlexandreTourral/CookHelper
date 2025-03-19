@@ -8,6 +8,7 @@ import { useObservable } from "@ngneat/react-rxjs";
 
 import { PlanningApi } from "../../firebase";
 import { selectMeals } from "../../API/geminiAI";
+import { generateShoppingList, generateShoppingListPDF } from "../../hooks";
 
 export function PlanningButton() {
   const [modalState, setModalState] = useState(false);
@@ -26,6 +27,16 @@ export function PlanningButton() {
     reloadPlanning();
   }
 
+  const handleDownloaShoppingList = async () => {
+    const pdfBlob = await generateShoppingListPDF();
+    const url = URL.createObjectURL(pdfBlob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "Liste-de-Courses.pdf";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <Stack direction={"row"} spacing={2} sx={{ alignSelf: "end" }}>
       <Button variant="contained" color="primary" onClick={handleAddMeal} sx={{ width: "fit-content", gap: "8px" }}>
@@ -39,6 +50,9 @@ export function PlanningButton() {
             Supprimer un plat
           </Button>
       }
+      <Button variant="contained" color="primary" onClick={handleDownloaShoppingList}  sx={{ width: "fit-content", gap: "8px" }}>
+        Générer la liste des courses
+      </Button>
       <ModalNewMeal onClose={() => setModalState(false)} open={modalState} onSubmit={(name: string) => handleSubmitForm(name)} />
     </Stack>
   )
