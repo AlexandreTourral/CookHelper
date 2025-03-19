@@ -1,13 +1,12 @@
 import { Button, Stack } from "@mui/material";
 import { ModalNewMeal } from "../organisms";
-import { RecipeApi } from "../../firebase/recettesApi";
+import { MenuApi } from "../../firebase/menuApi";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { PlanningStore, reloadPlanning, updatePlanningStatus } from "../../store";
 import { useObservable } from "@ngneat/react-rxjs";
 
 import { PlanningApi } from "../../firebase";
-import { DayMealType } from "../../type/menuType";
 import { selectMeals } from "../../API/geminiAI";
 
 export function PlanningButton() {
@@ -17,22 +16,12 @@ export function PlanningButton() {
 
   const handleSubmitForm = (name: string) => {
     setModalState(false);
-    RecipeApi.addRecipes(name)
+    MenuApi.addMenu(name)
     navigate(".", { replace: true });
   }
 
   const handleAddMeal = async () => {
-    // const weekMeals: Record<string, DayMealType> = {
-    //   "Lundi": { "lunch": "repas du lundi midi", "diner": "repas du lundi soir" },
-    //   "Mardi": { "lunch": "repas du mardi midi", "diner": "repas du mardi soir" },
-    //   "Mercredi": { "lunch": "repas du mercredi midi", "diner": "repas du mercredi soir" },
-    //   "Jeudi": { "lunch": "repas du jeudi midi", "diner": "repas du jeudi soir" },
-    //   "Vendredi": { "lunch": "repas du vendredi midi", "diner": "repas du vendredi soir" },
-    //   "Samedi": { "lunch": "repas du samedi midi", "diner": "repas du samedi soir" },
-    //   "Dimanche": { "lunch": "repas du dimanche midi", "diner": "repas du dimanche soir" },
-    // };
     const weekMeals = await selectMeals();
-    console.log(weekMeals);
     await PlanningApi.addWeekMeals(weekMeals);
     reloadPlanning();
   }

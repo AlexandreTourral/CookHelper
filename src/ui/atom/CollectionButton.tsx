@@ -2,7 +2,7 @@ import { Button, Stack } from "@mui/material";
 import { ModalNewCollection } from "../organisms";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { CollectionStore, resetCollection, resetMenu, updateCollectionStatus } from "../../store";
+import { CollectionStore, resetCollection, updateCollectionStatus } from "../../store";
 import { useObservable } from "@ngneat/react-rxjs";
 
 import AddBoxIcon from '@mui/icons-material/AddBox';
@@ -13,7 +13,7 @@ import { CollectionApi } from "../../firebase";
 export function CollectionButton() {
   const [modalState, setModalState] = useState(false);
   const navigate = useNavigate();
-  const collectionStore = useObservable(CollectionStore, (state) => state.isDeleting)
+  const collectionStore = useObservable(CollectionStore)
 
   const handleSubmitForm = async (name: string) => {
     setModalState(false);

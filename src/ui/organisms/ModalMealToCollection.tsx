@@ -1,7 +1,7 @@
 import { Box, Button, Modal, Stack, Typography } from "@mui/material";
 import { theme } from "../theme";
 import { useEffect, useState } from "react";
-import { RecipeApi } from "../../firebase";
+import { MenuApi } from "../../firebase";
 import { MenuListForCollection } from "../molecules";
 
 type modalMealToCollectionProps = {
@@ -33,8 +33,8 @@ export function ModalMealToCollection({ open, onClose, onSubmit, meals, title = 
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await RecipeApi.getRecipes()
-      setMealList(response[0].meal)
+      const response = await MenuApi.getMenu()
+      setMealList(response)
     }
 
     fetchData()
@@ -52,7 +52,7 @@ export function ModalMealToCollection({ open, onClose, onSubmit, meals, title = 
             <Typography variant="h5" >
               {title}
             </Typography>
-            <MenuListForCollection recipes={meals ? meals : mealList} />
+            <MenuListForCollection meals={meals ? meals : mealList} />
             <Button type="submit" variant="contained" color="secondary">
               Envoyer
             </Button>

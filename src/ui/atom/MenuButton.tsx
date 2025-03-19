@@ -1,6 +1,6 @@
 import { Button, Stack } from "@mui/material";
 import { ModalNewMeal } from "../organisms";
-import { RecipeApi } from "../../firebase/recettesApi";
+import { MenuApi } from "../../firebase/menuApi";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { MenuStore, resetMenu, updateMenuStatus } from "../../store";
@@ -14,16 +14,16 @@ import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 export function MenuButton() {
   const [modalState, setModalState] = useState(false);
   const navigate = useNavigate();
-  const menuStore = useObservable(MenuStore, (state) => state.isDeleting)
+  const menuStore = useObservable(MenuStore)
 
   const handleSubmitForm = (name: string) => {
     setModalState(false);
-    RecipeApi.addRecipes(name)
+    MenuApi.addMenu(name)
     navigate(".", { replace: true });
   }
 
   const handleRemoveMeal = () => {
-    RecipeApi.removeRecipes(menuStore[0].deleteItem)
+    MenuApi.removeMenu(menuStore[0].deleteItem)
     resetMenu()
     navigate(".", { replace: true });
   }

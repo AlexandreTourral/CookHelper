@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import { Layout } from "../ui/components";
-import { Collection, Dashboard, HomePage, LogInPage, Menu, Planning, SignUpPage, Weekook } from "../ui/pages";
-import { collectionLoader, menuLoader, weekookLoader } from "../loaders";
+import { Collection, Dashboard, HomePage, LogInPage, Menu, Planning, Recettes, SignUpPage, Weekook } from "../ui/pages";
+import { collectionLoader, menuLoader, recipeLoader, weekookLoader } from "../loaders";
 
 export const router = createBrowserRouter([
   {
@@ -43,6 +43,11 @@ export const router = createBrowserRouter([
           {
             path: "planning",
             element: <Planning />,
+          },
+          {
+            path: "recettes",
+            loader: recipeLoader,
+            element: <Recettes />,
           },
           {
             path: "collection",

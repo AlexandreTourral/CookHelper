@@ -1,23 +1,23 @@
-import { arrayRemove, arrayUnion, collection, deleteField, doc, getDocs, updateDoc } from "firebase/firestore";
+import { doc, updateDoc,  } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 import { DayMealType } from "../type/menuType";
+import { getWeekookSubCollections } from "./collectionApi";
 
 export class PlanningApi {
-  static weekDays = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi" ,"dimanche"];
+  static weekDays = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi" ,"dimanche"];    
 
   static async getWeekPlan() {
-    const querySnapshot = await getDocs(collection(db, "Planning"));
-    const weekPlan = querySnapshot.docs.map(doc => ({ ...doc.data() as Record<string, DayMealType> }));
-    const lunch = this.weekDays.map((day: string) => weekPlan[0][day].lunch)
-    const diner = this.weekDays.map((day: string) => weekPlan[0][day].diner)
+    const subDocs = await getWeekookSubCollections()
+    
+    const lunch = this.weekDays.map((day: string) => subDocs.Planning[day].lunch)
+    const diner = this.weekDays.map((day: string) => subDocs.Planning[day].diner)
     return {lunch, diner}
   }
 
   static async addMealToDay(day: string, meal: DayMealType) {
     try {
-      const planningRef = doc(db, "Planning", "Menu");
+      const planningRef = doc(db, "weekook", "Planning");
       await updateDoc(planningRef, { [day]: meal });
-      console.log("repas ajoutés avec succés")
     } catch (error) {
       console.error(error);
     }
@@ -34,9 +34,9 @@ export class PlanningApi {
   static async updateMealToDay(dayindex: number, meal: string, state: string) {
     try {
       const day = this.weekDays[dayindex];
-      const querySnapshot = await getDocs(collection(db, "Planning"));
-      const weekPlan = querySnapshot.docs.map(doc => ({ ...doc.data() as Record<string, DayMealType> }))[0];
-      const planningRef = doc(db, "Planning", "Menu");
+      const subDocs = await getWeekookSubCollections();
+      const weekPlan = subDocs.Planning
+      const planningRef = doc(db, "weekook", "Planning");
 
       if (state === "lunch") {
         const diner = weekPlan[day].diner

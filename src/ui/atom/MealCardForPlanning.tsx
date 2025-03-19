@@ -8,7 +8,7 @@ type MealCardForPlanningProps = {
 }
 
 export function MealCardForPlanning({ meal }: MealCardForPlanningProps) {
-  const menuStore = useObservable(MenuStore, (state) => state);
+  const menuStore = useObservable(MenuStore);
   const [checked, setChecked] = useState(false)
 
   useEffect(() => {

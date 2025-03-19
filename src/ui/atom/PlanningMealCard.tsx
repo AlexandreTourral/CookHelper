@@ -4,7 +4,7 @@ import { PlanningStore, reloadPlanning } from "../../store";
 import CloseIcon from '@mui/icons-material/Close';
 import { PlanningApi } from "../../firebase";
 import AddBoxIcon from '@mui/icons-material/AddBox';
-import { ModalMealToCollection, ModalMealToDay } from "../organisms";
+import { ModalMealToDay } from "../organisms";
 import { useState } from "react";
 
 type PlanningMealCardProps = {

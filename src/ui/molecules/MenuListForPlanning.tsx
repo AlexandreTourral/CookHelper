@@ -3,10 +3,10 @@ import { theme } from "../theme";
 import { MealCardForPlanning } from "../atom";
 
 type menuListProps = {
-  recipes: string[]
+  meals: string[]
 }
 
-export function MenuListForPlanning({ recipes }: menuListProps) {
+export function MenuListForPlanning({ meals }: menuListProps) {
   return (
     <Box sx={{ backgroundColor: theme.palette.background.paper, borderRadius: "16px", border: "solid 1px", borderColor: theme.palette.secondary.main, padding: "8px 16px 8px 16px" }}>
       <Stack direction="column"
@@ -17,7 +17,7 @@ export function MenuListForPlanning({ recipes }: menuListProps) {
           },
         }}
       >
-        { recipes.map((meal) => <MealCardForPlanning meal={meal} key={meal} /> )}
+        { meals.map((meal) => <MealCardForPlanning meal={meal} key={meal} /> )}
       </Stack>
     </Box>
   )

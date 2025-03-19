@@ -17,6 +17,10 @@ export function SideBar() {
     navigate("planning")
   }
 
+  const handleRecetteNavigation = () => {
+    navigate("recettes")
+  }
+
   return (
     <Box sx={{ backgroundColor: theme.palette.background.paper, borderRadius: "16px", border: "solid 1px", borderColor: theme.palette.secondary.main, width: "fit-content", padding: "16px" }}>
       <Stack direction={"column"} spacing={3} sx={{ alignItems: "flex-start" }}>
@@ -28,6 +32,9 @@ export function SideBar() {
         </Typography>
         <Typography component={"button"} variant="h5" onClick={handlePlanningNavigation} sx={{ cursor: "pointer" }}>
           Planning
+        </Typography>
+        <Typography component={"button"} variant="h5" onClick={handleRecetteNavigation} sx={{ cursor: "pointer" }}>
+          Recettes
         </Typography>
       </Stack>
     </Box>

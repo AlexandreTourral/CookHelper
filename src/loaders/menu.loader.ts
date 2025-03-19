@@ -1,6 +1,6 @@
-import { RecipeApi } from "../firebase/recettesApi"
+import { MenuApi } from "../firebase/menuApi"
 
 export async function menuLoader() {
-  const recipes = await RecipeApi.getRecipes();
-  return recipes[0].meal
+  const menu = await MenuApi.getMenu();
+  return menu
 }

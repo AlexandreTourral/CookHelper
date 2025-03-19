@@ -7,7 +7,7 @@ import { theme } from "../theme";
 import { logOutUser } from "../../hooks/logOutUser";
 
 export function NavBar() {
-  const user = useObservable(AuthStore, (state) => state.user);
+  const user = useObservable(AuthStore);
 
   const handleLogOut = () => {
     logOutUser()

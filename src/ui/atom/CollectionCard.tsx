@@ -7,6 +7,7 @@ import { addCollection, CollectionStore, removeCollection, resetCollection } fro
 import { useObservable } from "@ngneat/react-rxjs";
 import { useEffect, useState } from "react";
 import AddBoxIcon from '@mui/icons-material/AddBox';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import { ModalMealToCollection } from "../organisms";
 import { CollectionApi } from "../../firebase";
 import { useNavigate } from "react-router-dom";
@@ -17,7 +18,7 @@ type CollectionCardProps = {
 }
 
 export function CollectionCard({ collectionKey, collectionsList }: CollectionCardProps) {
-  const collectionStore = useObservable(CollectionStore, (state) => state);
+  const collectionStore = useObservable(CollectionStore);
   const [checked, setChecked] = useState(false)
   const [isModalMealToCollectionOpen, setModalMealToCollectionState] = useState(false)
   const [isModalRemoveMealFromCollectionOpen, setModalRemoveMealFromCollectionState] = useState(false)
@@ -91,7 +92,7 @@ export function CollectionCard({ collectionKey, collectionsList }: CollectionCar
               </Button>
               <Button variant="contained" color="primary" onClick={handleRemoveMealToCollection} sx={{ width: "fit-content", gap: "8px" }}>
                 Supprimer un plat de la collection
-                <AddBoxIcon />
+                <RemoveCircleOutlineIcon />
               </Button>
             </Stack>
             { collectionsList[collectionKey].map((meals) => <MealCard meal={meals} key={meals} /> )}

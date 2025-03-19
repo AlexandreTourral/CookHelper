@@ -1,7 +1,7 @@
 import { Box, Button, Modal, Stack, Typography } from "@mui/material";
 import { theme } from "../theme";
 import { useEffect, useState } from "react";
-import { RecipeApi } from "../../firebase";
+import { MenuApi } from "../../firebase";
 import { MenuListForPlanning } from "../molecules";
 
 type modalMealToDayProps = {
@@ -33,8 +33,8 @@ export function ModalMealToDay({ open, onClose, onSubmit, meals, title = "🥞 A
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await RecipeApi.getRecipes()
-      setMealList(response[0].meal)
+      const meal = await MenuApi.getMenu()
+      setMealList(meal)
     }
 
     fetchData()
@@ -52,7 +52,7 @@ export function ModalMealToDay({ open, onClose, onSubmit, meals, title = "🥞 A
             <Typography variant="h5" >
               {title}
             </Typography>
-            <MenuListForPlanning recipes={meals ? meals : mealList} />
+            <MenuListForPlanning meals={meals ? meals : mealList} />
             <Button type="submit" variant="contained" color="secondary">
               Envoyer
             </Button>

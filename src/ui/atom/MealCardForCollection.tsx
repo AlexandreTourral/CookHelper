@@ -8,7 +8,7 @@ type MealCardForCollectionProps = {
 }
 
 export function MealCardForCollection({ meal }: MealCardForCollectionProps) {
-  const menuStore = useObservable(MenuStore, (state) => state);
+  const menuStore = useObservable(MenuStore);
   const [checked, setChecked] = useState(false)
 
   useEffect(() => {

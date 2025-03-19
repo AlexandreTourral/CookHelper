@@ -1,15 +1,20 @@
-import { Checkbox, Stack, Typography } from "@mui/material"
+import { Button, Checkbox, Stack, Typography } from "@mui/material"
 import { useObservable } from "@ngneat/react-rxjs";
 import { addItem, MenuStore, removeItem } from "../../store";
 import { useEffect, useState } from "react";
+import EditIcon from '@mui/icons-material/Edit';
+import { ModalAddRecipe } from "../organisms";
+import { RecipeApi } from "../../firebase/recipeApi";
+import { RecipeStore } from "../../store/RecipeStore";
 
 type MealCardProps = {
   meal: string
 }
 
 export function MealCard({ meal }: MealCardProps) {
-  const menuStore = useObservable(MenuStore, (state) => state);
-  const [checked, setChecked] = useState(false)
+  const menuStore = useObservable(MenuStore);
+  const [checked, setChecked] = useState(false);
+  const [modalIsOpen, setModalStatus] = useState(false)
 
   useEffect(() => {
     if (menuStore[0].deleteItem.indexOf(meal) === -1) {
@@ -28,10 +33,20 @@ export function MealCard({ meal }: MealCardProps) {
     }
   }
 
+  const handleSubmit = async () => {
+    await RecipeApi.addRecipe(RecipeStore.value.ingredient, meal)
+  }
+
   return (
-    <Stack key={meal} direction="row">
-      { menuStore[0].isDeleting ? <Checkbox onChange={handleCheckboxChecked} checked={checked} color="secondary" /> : null }
-      <Typography variant="body1" sx={{ padding: "8px" }}>  { meal } </Typography>
+    <Stack direction="row" sx={{ alignItems: "center", justifyContent: "space-between" }}>
+      <Stack key={meal} direction="row">
+        { menuStore[0].isDeleting ? <Checkbox onChange={handleCheckboxChecked} checked={checked} color="secondary" /> : null }
+        <Typography variant="body1" sx={{ padding: "8px" }}>  { meal } </Typography>
+      </Stack>
+      <Button color="inherit" onClick={() => setModalStatus(true)}>
+        <EditIcon />
+      </Button>
+      <ModalAddRecipe meal={meal} onClose={() => setModalStatus(false)} onSubmit={handleSubmit} open={modalIsOpen} />
     </Stack>
   )
 }
