@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 import EditIcon from '@mui/icons-material/Edit';
 import { ModalAddRecipe } from "../organisms";
 import { RecipeApi } from "../../firebase/recipeApi";
-import { RecipeStore } from "../../store/RecipeStore";
+import { RecipeStore, resetIngredient } from "../../store/RecipeStore";
+import { useNavigate } from "react-router-dom";
 
 type MealCardProps = {
   meal: string
@@ -15,6 +16,7 @@ export function MealCard({ meal }: MealCardProps) {
   const menuStore = useObservable(MenuStore);
   const [checked, setChecked] = useState(false);
   const [modalIsOpen, setModalStatus] = useState(false)
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (menuStore[0].deleteItem.indexOf(meal) === -1) {
@@ -34,7 +36,10 @@ export function MealCard({ meal }: MealCardProps) {
   }
 
   const handleSubmit = async () => {
+    setModalStatus(false)
     await RecipeApi.addRecipe(RecipeStore.value.ingredient, meal)
+    resetIngredient();
+    navigate(".", { replace: true });
   }
 
   return (

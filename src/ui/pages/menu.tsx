@@ -12,7 +12,10 @@ export function Menu() {
         🍱 Vos Plats 🥗
       </Typography>
       <MenuButton />
-      <MenuList meals={meals} />
+      {meals !== undefined
+        ? <MenuList meals={meals} />
+        : null
+      }
     </Stack> 
   )
 }

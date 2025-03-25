@@ -10,6 +10,7 @@ import AddBoxIcon from '@mui/icons-material/AddBox';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
+import DoNotDisturbIcon from '@mui/icons-material/DoNotDisturb';
 
 export function MenuButton() {
   const [modalState, setModalState] = useState(false);
@@ -47,6 +48,7 @@ export function MenuButton() {
       { menuStore[0].isDeleting
         ? <Button variant="contained" color="secondary" onClick={resetMenu} sx={{ width: "fit-content", gap: "8px" }}>
             Annuler
+            <DoNotDisturbIcon />
           </Button>
         : <Button variant="contained" color="primary" onClick={updateMenuStatus} sx={{ width: "fit-content", gap: "8px" }}>
             Supprimer un plat

@@ -1,46 +1,62 @@
-import { arrayRemove, arrayUnion, collection, deleteField, doc, getDocs, updateDoc } from "firebase/firestore";
+import { arrayRemove, arrayUnion, collection, deleteField, doc, getDoc, getDocs, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "./firebaseConfig";
+import { AuthStore } from "../store";
+import { docType } from "../type/docType";
 
-export async function getWeekookSubCollections() {
+export async function getWeekookSubCollections(): Promise<docType> {
   const querySnapshot = await getDocs(collection(db, "weekook"));
-  const subDocs = querySnapshot.docs.map(doc => ({...doc.data()}));
+  const user = AuthStore.getValue().User
 
-  const docs = {
-    Collections: subDocs[0],
-    Menu: subDocs[1],
-    Planning: subDocs[2],
-    Recettes: subDocs[3]
-  }
-  return docs
+  const result = querySnapshot.docs.find((document) => document.id === user?.uid);
+  return result?.data() as docType
 }
 
 export class CollectionApi {
   static async getCollections() {
     const subDocs = await getWeekookSubCollections();
-    return subDocs.Collections as Record<string, string[]>;
+    return subDocs.Collections
   }
 
   static async addCollection(name: string) {
     try {
-      const collectionRef = doc(db, "weekook", "Collections");
-      await updateDoc(collectionRef, { [name]: [] } );
-      await updateDoc(collectionRef, { key: arrayUnion(name) } )
+      const collectionRef = doc(db, "weekook", AuthStore.getValue().User?.uid ?? "");
+      const docSnap = await getDoc(collectionRef)
+
+      if (!docSnap.exists())  {
+        await setDoc(collectionRef, { Collections: {[name]: [], key: arrayUnion(name) }});
+      } else {
+        if (docSnap.get("Collections")) {
+          const oldCollection = await this.getCollections()
+          oldCollection["key"] = [...oldCollection["key"], name]
+          oldCollection[name] = []
+          await updateDoc(collectionRef, { Collections: oldCollection });
+        } else {
+          await updateDoc(collectionRef, { Collections: { key: [name], [name]: [] }});
+        }
+      }
     } catch (error) {
       console.error("Erreur lors de l'ajout de la collection :", error);
     }
   }
 
   static async addMealToCollection(meals: string[], collection: string) {
-    const collectionRef = doc(db, "weekook", "Collections");
+    const collectionRef = doc(db,  "weekook", AuthStore.getValue().User?.uid ?? "");
+    const docSnap = await getDoc(collectionRef)
+    const collectionTmp = docSnap.get("Collections")
+    collectionTmp[collection] = [...collectionTmp[collection], ...meals]
     await updateDoc(collectionRef, {
-      [collection]: arrayUnion(...meals)
+      Collections: collectionTmp
     })
   }
 
   static async removeMealFromCollection(meals: string[], collection: string) {
-    const collectionRef = doc(db, "weekook", "Collections");
+    const collectionRef = doc(db, "weekook", AuthStore.getValue().User?.uid ?? "");
+    const docSnap = await getDoc(collectionRef)
+    const collectionTmp = docSnap.get("Collections")
+
+    collectionTmp[collection] = [...collectionTmp[collection]].filter((meal) => !meals.includes(meal))
     await updateDoc(collectionRef, {
-      [collection]: arrayRemove(...meals)
+      Collections: collectionTmp
     })
   }
 
@@ -48,10 +64,10 @@ export class CollectionApi {
     try {
       await Promise.all(
         names.map(async (name) => {
-          const docRef = doc(db, "weekook", "Collections");
+          const docRef = doc(db, "weekook", AuthStore.getValue().User?.uid ?? "");
           await updateDoc(docRef, {
-            [name]: deleteField(),
-            key: arrayRemove(name)
+            [`Collections.${name}`]: deleteField(),
+            [`Collections.key`]: arrayRemove(name)
           })
         })
       );

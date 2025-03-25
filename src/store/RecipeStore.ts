@@ -3,13 +3,21 @@ import { ingredient, ingredientEnum } from '../type/recipeType';
 
 export interface RecipeProps {
   meal: string;
-  ingredient: ingredient[]
+  ingredient: ingredient[];
+  isDeleting: boolean;
 }
 
 export const RecipeStore = createStore(
   { name: 'recipe' },
-  withProps<RecipeProps>({ meal: "", ingredient: [] })
+  withProps<RecipeProps>({ meal: "", ingredient: [], isDeleting: false })
 );
+
+export function updateRecipeDeletingStatus() {
+  RecipeStore.update((state) => ({
+    ...state,
+    isDeleting: !state.isDeleting,
+  }))
+}
 
 export function addMealName(newMealName: string) {
   RecipeStore.update((state) => ({
@@ -35,7 +43,8 @@ export function removeIngredient(name: string) {
 export function resetIngredient() {
   RecipeStore.update(() => ({
     meal: "",
-    ingredient: []
+    ingredient: [],
+    isDeleting: false,
   }))
 } 
 

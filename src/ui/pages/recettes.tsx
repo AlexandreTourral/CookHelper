@@ -10,7 +10,9 @@ export function Recettes() {
   return (
     <Box sx={{ width: "100%", backgroundColor: theme.palette.background.paper, borderRadius: "16px", border: "solid 1px", borderColor: theme.palette.secondary.main, padding: "16px 16px 16px 16px" }}>
       <RecettesButton />
-      <RecipesList recipe={recipe} mealKey={mealKey} />
+      { mealKey
+        ? <RecipesList recipe={recipe} mealKey={mealKey} />
+        : null }
     </Box>
   )
 }

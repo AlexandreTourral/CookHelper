@@ -14,6 +14,11 @@ export type ingredient = {
   type: ingredientEnum
 }
 
-export interface recipeType {
+export interface ingredientType {
   ingredients: Record<string, ingredient[]>
+}
+
+export type recipeType = {
+  meals: Record<string, ingredient[]>,
+  key: string[]
 }

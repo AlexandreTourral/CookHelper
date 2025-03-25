@@ -2,7 +2,7 @@ import { Box, Button, Modal, Stack, TextField, Typography } from "@mui/material"
 import { theme } from "../theme";
 import { useState } from "react";
 import { ingredientEnum } from "../../type/recipeType";
-import { addIngredient, addMealName, RecipeStore, resetIngredient } from "../../store/RecipeStore";
+import { addIngredient, addMealName, RecipeStore  } from "../../store/RecipeStore";
 import { useObservable } from "@ngneat/react-rxjs";
 
 type modalNewRecipeProps = {
@@ -33,7 +33,6 @@ export function ModalAddRecipe({ create, meal, open, onClose, onSubmit }: modalN
   
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    resetIngredient();
     onSubmit(mealName);
   }
 
@@ -54,9 +53,12 @@ export function ModalAddRecipe({ create, meal, open, onClose, onSubmit }: modalN
         <form onSubmit={handleSubmit} >
           <Stack spacing={4} sx={{ alignItems: "center" }}>
             <Typography variant="h5" >
-              📋 Ajouter une recette pour "{create ? meal : null}" 📋
+              📋 Ajouter une recette pour "{create === undefined ? meal : null}" 📋
             </Typography>
-            <TextField id="outlined-basic" label="Nom du menu" variant="outlined" color="secondary" value={mealName} onChange={(e) => setMealName(e.target.value)} />
+            {create !== undefined
+              ? <TextField id="outlined-basic" label="Nom du menu" variant="outlined" color="secondary" value={mealName} onChange={(e) => setMealName(e.target.value)} />
+              : null
+            }
             <Typography>
               Ingredients:  
             </Typography>
