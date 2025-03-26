@@ -8,7 +8,7 @@ type menuListProps = {
 
 export function MenuList({ meals }: menuListProps) {
   return (
-    <Box sx={{ backgroundColor: theme.palette.background.paper, borderRadius: "16px", border: "solid 1px", borderColor: theme.palette.secondary.main, padding: "8px 16px 8px 16px" }}>
+    <Box sx={{ backgroundColor: theme.palette.background.paper, borderRadius: "8px", border: "solid 1px", borderColor: theme.palette.secondary.main, padding: "8px 16px 8px 16px" }}>
       <Stack direction="column"
         sx={{
           '& > *:not(:first-child)': {

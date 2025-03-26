@@ -26,17 +26,17 @@ export function RecettesButton() {
   }
 
   return (
-    <Stack direction={"row"} spacing={2} sx={{ alignSelf: "end" }}>
-      <Button variant="contained" color="primary" onClick={() => setModalState(true)} sx={{ width: "fit-content", gap: "8px" }}>
+    <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ alignSelf: "end" }}>
+      <Button variant="contained" color="primary" onClick={() => setModalState(true)} sx={{ width: { xs: "100%", sm: "fit-content" }, gap: "8px" }}>
         Ajouter une recette
         <AddBoxIcon />
       </Button>
       {!recipeStore.isDeleting
-        ? <Button variant="contained" color="primary" onClick={updateRecipeDeletingStatus} sx={{ width: "fit-content", gap: "8px" }}>
+        ? <Button variant="contained" color="primary" onClick={updateRecipeDeletingStatus} sx={{ width: { xs: "100%", sm: "fit-content" }, gap: "8px" }}>
             Supprimer une recette
             <RemoveCircleOutlineIcon />
           </Button>
-        : <Button variant="contained" color="primary" onClick={updateRecipeDeletingStatus} sx={{ width: "fit-content", gap: "8px" }}>
+        : <Button variant="contained" color="primary" onClick={updateRecipeDeletingStatus} sx={{ width: { xs: "100%", sm: "fit-content" }, gap: "8px" }}>
             Annuler
             <DoNotDisturbIcon />
           </Button>

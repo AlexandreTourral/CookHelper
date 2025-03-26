@@ -30,31 +30,44 @@ export function MenuButton() {
   }
 
   return (
-    <Stack direction={"row"} spacing={2} sx={{ alignSelf: "end" }}>
-      { menuStore[0].isDeleting
-        ? <Button variant="contained" color="primary" onClick={handleRemoveMeal} sx={{ width: "fit-content", gap: "8px" }}>
-            <DeleteIcon />
-          </Button>
-        : null  
-      }
-      <Button variant="contained" color="primary" onClick={() => navigate("/weekook/collection")} sx={{ width: "fit-content", gap: "8px" }}>
+    <Stack 
+      direction={{ xs: "column", sm: "row" }} 
+      spacing={2} 
+      sx={{ 
+        width: "100%", 
+        alignItems: "center", 
+        justifyContent: { xs: "center", sm: "start" }, 
+        flexWrap: "wrap", 
+      }}
+    >
+      {menuStore[0].isDeleting && (
+        <Button variant="contained" color="primary" onClick={handleRemoveMeal} sx={{ width: { xs: "100%", sm: "fit-content" }, gap: "8px" }}>
+          <DeleteIcon />
+        </Button>
+      )}
+
+      <Button variant="contained" color="primary" onClick={() => navigate("/weekook/collection")} sx={{ width: { xs: "100%", sm: "fit-content" }, gap: "8px" }}>
         Collection
         <LibraryBooksIcon />
       </Button>
-      <Button variant="contained" color="primary" onClick={() => setModalState(true)} sx={{ width: "fit-content", gap: "8px" }}>
+    
+      <Button variant="contained" color="primary" onClick={() => setModalState(true)} sx={{ width: { xs: "100%", sm: "fit-content" }, gap: "8px" }}>
         Ajouter un plat
         <AddBoxIcon />
       </Button>
-      { menuStore[0].isDeleting
-        ? <Button variant="contained" color="secondary" onClick={resetMenu} sx={{ width: "fit-content", gap: "8px" }}>
-            Annuler
-            <DoNotDisturbIcon />
-          </Button>
-        : <Button variant="contained" color="primary" onClick={updateMenuStatus} sx={{ width: "fit-content", gap: "8px" }}>
-            Supprimer un plat
-            <RemoveCircleOutlineIcon />
-          </Button>
-      }
+    
+      {menuStore[0].isDeleting ? (
+        <Button variant="contained" color="secondary" onClick={resetMenu} sx={{ width: { xs: "100%", sm: "fit-content" }, gap: "8px" }}>
+          Annuler
+          <DoNotDisturbIcon />
+        </Button>
+      ) : (
+        <Button variant="contained" color="primary" onClick={updateMenuStatus} sx={{ width: { xs: "100%", sm: "fit-content" }, gap: "8px" }}>
+          Supprimer un plat
+          <RemoveCircleOutlineIcon />
+        </Button>
+      )}
+
       <ModalNewMeal onClose={() => setModalState(false)} open={modalState} onSubmit={(name: string) => handleSubmitForm(name)} />
     </Stack>
   )

@@ -31,7 +31,7 @@ export function SideBar() {
 
   return (
     sidebarState.isHidden
-      ? <Box sx={{ backgroundColor: theme.palette.background.paper, borderRadius: "8px", border: "solid 1px", borderColor: theme.palette.secondary.main, width: "fit-content", padding: "16px", margin: "32px", height: "100%" }}>
+      ? <Box sx={{ backgroundColor: theme.palette.background.paper, borderRadius: "8px", border: "solid 1px", borderColor: theme.palette.secondary.main, width: "fit-content", padding: "16px", margin: "32px 0px 32px 16px", height: "100%" }}>
       <Stack direction={"column"} spacing={3} sx={{ alignItems: "flex-start" }}>
         <Stack direction="row" spacing={1} sx={{ alignItems: "center"}}>
           <SpaceDashboardIcon />
@@ -74,6 +74,6 @@ export function SideBar() {
           <MenuBookIcon />
         </Typography>
       </Stack>
-      </Box>
+    </Box>
   )
 }

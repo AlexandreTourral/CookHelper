@@ -6,7 +6,7 @@ export interface sidebarProps {
 
 export const SidebarState = createStore(
   { name: 'sidebar' },
-  withProps<sidebarProps>({ isHidden: true })
+  withProps<sidebarProps>({ isHidden: false })
 );
 
 export function updateSidebarStatus() {

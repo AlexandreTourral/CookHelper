@@ -9,7 +9,7 @@ type recipeListProps = {
 
 export function RecipesList({ recipe, mealKey }: recipeListProps) {
   return (
-    <Box sx={{ marginTop: "16px" }}>
+    <Box>
       <Stack direction="column"  spacing={2}>
         { mealKey.map((mealName: string) => (
           <RecipeCard key={mealName} recipe={recipe} mealName={mealName} />
