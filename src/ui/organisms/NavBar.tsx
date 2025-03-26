@@ -5,6 +5,8 @@ import { AuthStore } from "../../store/UserStore";
 import { useObservable } from "@ngneat/react-rxjs";
 import { theme } from "../theme";
 import { logOutUser } from "../../hooks/logOutUser";
+import DehazeIcon from '@mui/icons-material/Dehaze';
+import { updateSidebarStatus } from "../../store/SideBarStore";
 
 export function NavBar() {
   const user = useObservable(AuthStore);
@@ -24,7 +26,9 @@ export function NavBar() {
       }}
     >
       <Toolbar className="flex justify-between items-center px-4">
-        <img src="/assets/CookHelper_logo.webp" alt="Logo" className="h-12" />
+        <Button onClick={updateSidebarStatus}>
+          <DehazeIcon sx={{ color: theme.palette.text.primary }} />
+        </Button>
         <Typography
           variant="h6"
           sx={{

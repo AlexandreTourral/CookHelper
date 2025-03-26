@@ -11,11 +11,11 @@ export class PlanningApi {
     const subDocs = await getWeekookSubCollections()
 
     if (subDocs === undefined) {
-      return { lunch: [], diner: []}
+      return { lunch: [], diner: [], planning: {}}
     }
     const lunch = this.weekDays.map((day: string) => subDocs.Planning[day].lunch)
     const diner = this.weekDays.map((day: string) => subDocs.Planning[day].diner)
-    return {lunch, diner}
+    return {lunch, diner, planning: subDocs.Planning}
   }
 
   static async addMealToDay(day: string, meal: DayMealType) {
@@ -40,6 +40,29 @@ export class PlanningApi {
   static async updateMealToDay(dayindex: number, meal: string, state: string) {
     try {
       const day = this.weekDays[dayindex];
+      const subDocs = await getWeekookSubCollections();
+      const weekPlan = subDocs.Planning
+      const planningRef = doc(db, "weekook", AuthStore.getValue().User?.uid ?? "",);
+
+      if (state === "lunch") {
+        const diner = weekPlan[day].diner
+        await updateDoc(planningRef, { 
+          [`Planning.${day}`]: { lunch: meal, diner} 
+        });
+      } else if (state === "diner") {
+        const lunch = weekPlan[day].lunch
+        await updateDoc(planningRef, {  [`Planning.${day}`]: { lunch, diner: meal} });
+      } else {
+        await updateDoc(planningRef, { [`Planning.${day}`]: { lunch: "Pas de repas prévu" , diner: "Pas de repas prévu"} });
+      }
+      console.log("repas modifié avec succés")
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  static async updateMealToDayV2(day: string, meal: string, state: string) {
+    try {
       const subDocs = await getWeekookSubCollections();
       const weekPlan = subDocs.Planning
       const planningRef = doc(db, "weekook", AuthStore.getValue().User?.uid ?? "",);

@@ -1,140 +1,69 @@
-import { Grid2, Stack, Typography } from "@mui/material";
-import { theme } from "../theme";
-import { useEffect, useState } from "react";
+import { Paper, styled, Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
 import { PlanningApi } from "../../firebase";
-import { PlanningMealCard } from "../atom";
+import { DayMealType } from "../../type/menuType";
 import { useObservable } from "@ngneat/react-rxjs";
 import { PlanningStore } from "../../store";
+import { PlanningMealCard } from "../atom";
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.text.primary,
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+    color: theme.palette.text.primary
+  },
+}));
+
+function createData(
+  name: string,
+  lunch: string,
+  diner: string,
+) {
+  return { name, lunch, diner };
+}
 
 export function MealPlanArray() {
-  const planninStore = useObservable(PlanningStore)
-  const [lunchMeal, setLunchMeal] = useState<string[]>([])
-  const [dinerMeal, setDinerMeal] = useState<string[]>([])
+  const [planningMeal, setPlanningMeal] = useState<Record<string, DayMealType>>({})
+  const planningStore = useObservable(PlanningStore)[0]
 
   useEffect(() => {
     const fetchData = async () => {
-      const {lunch, diner} = await PlanningApi.getWeekPlan()
-      setLunchMeal(lunch)
-      setDinerMeal(diner)
+      const { planning } = await PlanningApi.getWeekPlan()
+      setPlanningMeal(planning)
     }
 
     fetchData()
-  }, [planninStore[0].reloader])
+  }, [planningStore.reloader])
+
+  const rows = useMemo(() => {
+    if (!planningMeal["lundi"]) return [];
+    return [...PlanningApi.weekDays.map((day) => createData(day, planningMeal[day].lunch, planningMeal[day].diner))];
+  }, [planningMeal]);
 
   return (
-    <Stack sx={{ marginTop: "16px" }}>
-      <Grid2 container spacing={0} sx={{ '--Grid-borderWidth': '1px',
-          backgroundColor: theme.palette.text.primary,
-          borderTop: 'var(--Grid-borderWidth) solid',
-          borderBottom: 'var(--Grid-borderWidth) solid',
-          borderLeft: 'var(--Grid-borderWidth) solid',
-          borderTopRightRadius: "16px",
-          borderTopLeftRadius: "16px",
-          borderBottomRightRadius: "none",
-          borderColor: 'black',
-          overflow: "hidden",
-          '& > div': {
-            borderRight: 'var(--Grid-borderWidth) solid',
-            borderColor: "black",
-          },
-          '&:last-child': {
-            borderTopRightRadius: "16px"
-          }
-        }}
-      >
-        <Grid2 size={1.5} sx={{ padding: "16px", justifyContent: "center", textAlign: "-webkit-center" }}>
-          <img src="/assets/CookHelper_logo.webp" alt="Logo" className="h-36" />
-        </Grid2>
-        <Grid2 size="grow" sx={{ alignContent: "center" }}>
-          <Typography variant="h6" color="secondary" >
-            Lundi
-          </Typography>
-        </Grid2>
-        <Grid2 size="grow" sx={{ alignContent: "center" }}>
-          <Typography variant="h6" color="secondary">
-            Mardi
-          </Typography>
-        </Grid2>
-        <Grid2 size="grow" sx={{ alignContent: "center" }}>
-          <Typography variant="h6" color="secondary">
-            Mercredi
-          </Typography>
-        </Grid2>
-        <Grid2 size="grow" sx={{ alignContent: "center" }}>
-          <Typography variant="h6" color="secondary">
-            Jeudi
-          </Typography>
-        </Grid2>
-        <Grid2 size="grow" sx={{ alignContent: "center" }}>
-          <Typography variant="h6" color="secondary">
-            Vendredi
-          </Typography>
-        </Grid2>
-        <Grid2 size="grow" sx={{ alignContent: "center" }}>
-          <Typography variant="h6" color="secondary">
-            Samedi
-          </Typography>
-        </Grid2>
-        <Grid2 size="grow" sx={{ alignContent: "center" }}>
-          <Typography variant="h6" color="secondary">
-            Dimanche
-          </Typography>
-        </Grid2>
-      </Grid2>
-      <Grid2 container
-        sx={{
-          backgroundColor: theme.palette.secondary.main, 
-          '--Grid-borderWidth': '1px',
-          borderBottom: 'var(--Grid-borderWidth) solid',
-          borderLeft: 'var(--Grid-borderWidth) solid',
-          borderColor: 'black',
-          overflow: "hidden",
-          '& > div': {
-            borderRight: 'var(--Grid-borderWidth) solid',
-            borderColor: "black",
-          },
-          '& > div:first-child': {
-            backgroundColor: theme.palette.text.primary,
-          }
-        }}
-      >
-        <Grid2 size={1.5} minHeight={250} sx={{ alignContent: "center" }}>
-          <Typography variant="h6" color="secondary">
-            Déjeuner
-          </Typography>
-        </Grid2>
-        { lunchMeal.map((lunch, index) => (
-          <PlanningMealCard key={lunch + index} meal={lunch} type="lunch" day={index} />
-        ))}
-      </Grid2>
-      <Grid2 container
-        sx={{
-          backgroundColor: theme.palette.primary.main, 
-          '--Grid-borderWidth': '1px',
-          borderBottom: 'var(--Grid-borderWidth) solid',
-          borderLeft: 'var(--Grid-borderWidth) solid',
-          borderColor: 'black',
-          borderBottomLeftRadius: "16px",
-          borderBottomRightRadius: "16px",
-          overflow: "hidden",
-          '& > div': {
-            borderRight: 'var(--Grid-borderWidth) solid',
-            borderColor: "black",
-          },
-          '& > div:first-child': {
-            backgroundColor: theme.palette.text.primary,
-          }
-        }}
-      >
-        <Grid2 size={1.5} minHeight={250} sx={{ alignContent: "center" }}>
-          <Typography variant="h6" color="secondary">
-            Diner
-          </Typography>
-        </Grid2>
-        { dinerMeal.map((diner, index) => (
-          <PlanningMealCard key={diner + index} meal={diner} type="diner" day={index} />
-        ))}
-      </Grid2>
-    </Stack>
+    <TableContainer component={Paper}>
+      <Table sx={{ minWidth: 200 }} aria-label="customized table">
+        <TableHead>
+          <TableRow>
+            <StyledTableCell> 
+              <img src="/assets/CookHelper_logo.webp" alt="Logo" className="h-15" />
+            </StyledTableCell>
+            <StyledTableCell align="center"> Déjeuner </StyledTableCell>
+            <StyledTableCell align="center"> Diner</StyledTableCell>
+          </TableRow>
+        </TableHead>
+        {rows !== null
+          ? <TableBody>
+              {rows.map((row) => (
+                <PlanningMealCard key={row.name} dayMeal={row} />
+              ))}
+            </TableBody>
+          : null        
+        }
+      </Table>
+    </TableContainer>
   )
 }

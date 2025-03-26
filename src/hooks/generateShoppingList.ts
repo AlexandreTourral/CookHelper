@@ -1,6 +1,6 @@
 import { PlanningApi } from "../firebase";
 import { RecipeApi } from "../firebase/recipeApi";
-import { ingredient, ingredientEnum } from "../type/recipeType";
+import { ingredientEnum } from "../type/recipeType";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 
 export async function generateShoppingList() {
@@ -8,18 +8,19 @@ export async function generateShoppingList() {
   const { recipe } = await RecipeApi.getRecipe();
   const shoppingList: Record<string, { quantity: number; type: ingredientEnum }> = {};
 
-  (["lunch", "diner"] as const).forEach((mealType) => {
-    Object.entries(weekPlan[mealType]).forEach(([mealName]) => {
-      const ingredients: ingredient[] = recipe[mealName] || [];
+  weekPlan.diner.forEach((meal) => {
+    if (recipe[meal]) {
+      const ingredients = recipe[meal]
       ingredients.forEach(({ name, quantity, type }) => {
         if (shoppingList[name]) {
           shoppingList[name].quantity += quantity;
         } else {
           shoppingList[name] = { quantity, type };
         }
-      });
-    });
-  });
+        console.log('here')
+      })
+    }
+  })
 
   return Object.entries(shoppingList)
     .map(([name, { quantity, type }]) => ({ name, quantity, type }))

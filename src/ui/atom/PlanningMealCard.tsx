@@ -1,4 +1,4 @@
-import { Button, Grid2, Stack, Typography } from "@mui/material";
+import { Button, styled, TableCell, tableCellClasses, TableRow } from "@mui/material";
 import { useObservable } from "@ngneat/react-rxjs";
 import { PlanningStore, reloadPlanning } from "../../store";
 import CloseIcon from '@mui/icons-material/Close';
@@ -8,48 +8,86 @@ import { ModalMealToDay } from "../organisms";
 import { useState } from "react";
 
 type PlanningMealCardProps = {
-  meal: string;
-  type: string;
-  day: number;
+  dayMeal: {
+    name: string;
+    lunch: string;
+    diner: string;
+  }
 }
 
-export function PlanningMealCard({ meal , type, day }: PlanningMealCardProps) {
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.text.primary,
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+    color: theme.palette.text.primary
+  },
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+  },
+
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+}));
+
+export function PlanningMealCard({ dayMeal }: PlanningMealCardProps) {
   const planningStore = useObservable(PlanningStore)[0];
   const [isModalOpen, setModalStatus] = useState(false);
+  const [mealType, setMealType] = useState("");
   
-  const handleRemoveMeal = async (meals: string) => {
-    await PlanningApi.updateMealToDay(day, meals, type);
+  const handleRemoveMeal = async (meals: string, type: string) => {
+    await PlanningApi.updateMealToDayV2(dayMeal.name, meals, type);
     reloadPlanning();
   }
 
-  const handleAddmeal = async () => {
+  const handleAddmeal = async (type: string) => {
     setModalStatus(false);
-    await PlanningApi.updateMealToDay(day, planningStore.addMeal, type);
+    await PlanningApi.updateMealToDayV2(dayMeal.name, planningStore.addMeal, type);
     reloadPlanning();
   }
-
-  
 
   return (
-    <Grid2 size="grow" sx={{ alignContent: "center", justifyItems: "center" }} >
-      <Stack direction="row" flexWrap={"wrap"} sx={{ justifyContent: "center", alignItems: "center" }}>
-        <Typography>
-          { meal }
-        </Typography>
-        { planningStore.isDeleting && meal !== "Pas de repas prévu"
-          ? <Button onClick={() => handleRemoveMeal("Pas de repas prévu")}>
+    <StyledTableRow key={dayMeal.name}>
+      <StyledTableCell component="th" scope="row">
+        {dayMeal.name}
+      </StyledTableCell>
+      <StyledTableCell align="center">
+        {dayMeal.lunch}
+        { planningStore.isDeleting && dayMeal.lunch !== "Pas de repas prévu"
+          ? <Button onClick={() => handleRemoveMeal("Pas de repas prévu", "lunch")}>
               <CloseIcon color="warning" />
             </Button>
           : null
         }
-        { meal === "Pas de repas prévu"
-          ? <Button onClick={() => setModalStatus(true)}>
+        { dayMeal.lunch === "Pas de repas prévu"
+          ? <Button onClick={() => {setModalStatus(true), setMealType("lunch")}}>
               <AddBoxIcon color="success"/>
             </Button>
           : null
         }
-      </Stack>
-      <ModalMealToDay open={isModalOpen} onClose={() => setModalStatus(false)} onSubmit={handleAddmeal} />
-    </Grid2>
+      </StyledTableCell>
+      <StyledTableCell align="center">
+        {dayMeal.diner}
+        { planningStore.isDeleting && dayMeal.diner !== "Pas de repas prévu"
+          ? <Button onClick={() => handleRemoveMeal("Pas de repas prévu", "diner")}>
+              <CloseIcon color="warning" />
+            </Button>
+          : null
+        }
+        { dayMeal.diner === "Pas de repas prévu"
+          ? <Button onClick={() => {setModalStatus(true), setMealType("diner")}}>
+              <AddBoxIcon color="success"/>
+            </Button>
+          : null
+        }
+        </StyledTableCell>
+      <ModalMealToDay open={isModalOpen} onClose={() => setModalStatus(false)} onSubmit={() => handleAddmeal(mealType)} />
+    </StyledTableRow>
   )
 }

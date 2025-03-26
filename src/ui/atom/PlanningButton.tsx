@@ -38,7 +38,7 @@ export function PlanningButton() {
   };
 
   return (
-    <Stack direction={"row"} spacing={2} sx={{ alignSelf: "end" }}>
+    <Stack direction={"row"} spacing={2} sx={{ alignSelf: "end", marginBottom: "16px" }}>
       <Button variant="contained" color="primary" onClick={handleAddMeal} sx={{ width: "fit-content", gap: "8px" }}>
         Générer les menus
       </Button>
