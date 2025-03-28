@@ -8,6 +8,7 @@ import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
 import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
+import CollectionsIcon from '@mui/icons-material/Collections';
 
 export function SideBar() {
   const navigate = useNavigate()
@@ -29,6 +30,10 @@ export function SideBar() {
     navigate("recettes")
   }
 
+  const handleCollectionNavigation = () => {
+    navigate("collection")
+  }
+
   const sidebarContent = (
     <Stack direction={"column"} spacing={3} sx={{ alignItems: "flex-start" }}>
       <Typography component={"button"} variant="h5" onClick={handleDashboardNavigation} sx={{ cursor: "pointer" }}>
@@ -42,6 +47,9 @@ export function SideBar() {
       </Typography>
       <Typography component={"button"} variant="h5" onClick={handleRecetteNavigation} sx={{ cursor: "pointer" }}>
         <MenuBookIcon />
+      </Typography>
+      <Typography component={"button"} variant="h5" onClick={handleCollectionNavigation} sx={{ cursor: "pointer" }}>
+        <CollectionsIcon />
       </Typography>
     </Stack>
   )
@@ -70,6 +78,12 @@ export function SideBar() {
         <MenuBookIcon />
         <Typography component={"button"} variant="h5" onClick={handleRecetteNavigation} sx={{ cursor: "pointer" }}>
           Recettes
+        </Typography>
+      </Stack>
+      <Stack direction="row" spacing={1} sx={{ alignItems: "center"}}>
+        <CollectionsIcon />
+        <Typography component={"button"} variant="h5" onClick={handleCollectionNavigation} sx={{ cursor: "pointer" }}>
+          Collection
         </Typography>
       </Stack>
     </Stack>
