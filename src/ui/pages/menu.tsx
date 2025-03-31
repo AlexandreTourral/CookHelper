@@ -8,7 +8,7 @@ export function Menu() {
   const meals = useLoaderData() as string[]
 
   return (
-    <Stack spacing={3}>
+    <Stack spacing={2}>
       <Box sx={{ width: "100%", backgroundColor: theme.palette.background.paper, borderRadius: "8px", textAlign: "center", border: "solid 1px", borderColor: theme.palette.secondary.main, padding: "16px 16px 16px 16px" }}>
         <MenuButton />
       </Box>
