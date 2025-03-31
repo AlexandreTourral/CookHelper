@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import { CollectionButton } from "../atom";
 import { useLoaderData } from "react-router-dom";
 import { CollectionList } from "../molecules";

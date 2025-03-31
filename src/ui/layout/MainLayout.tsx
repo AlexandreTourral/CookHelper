@@ -2,9 +2,7 @@ import { Box } from "@mui/material";
 import { NavBar } from "../organisms/NavBar";
 import { SideBar } from "../organisms/SideBar";
 import { MobileDrawer } from "../organisms/MobileDrawer";
-import { ReactNode, useEffect, useState } from "react";
-import { useObservable } from "@ngneat/react-rxjs";
-import { SidebarState } from "../../store/SideBarStore";
+import { ReactNode, useState } from "react";
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -12,7 +10,6 @@ interface MainLayoutProps {
 
 export function MainLayout({ children }: MainLayoutProps) {
   const [expanded, setExpanded] = useState(false);
-  const sidebarState = useObservable(SidebarState)[0];
 
   // Fonction pour écouter l'état d'expansion de la sidebar
   const handleSidebarExpand = (isExpanded: boolean) => {

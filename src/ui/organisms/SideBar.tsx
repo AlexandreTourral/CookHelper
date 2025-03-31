@@ -1,8 +1,6 @@
 import { Box, Collapse, IconButton, Stack, Tooltip, Typography, useMediaQuery, useTheme as useMuiTheme } from "@mui/material";
 import { theme } from "../theme";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useObservable } from "@ngneat/react-rxjs";
-import { SidebarState } from "../../store/SideBarStore";
 import { useEffect, useState } from "react";
 
 import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
@@ -48,7 +46,6 @@ interface SideBarProps {
 export function SideBar({ onExpandChange }: SideBarProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const sidebarState = useObservable(SidebarState)[0];
   const [expanded, setExpanded] = useState(true);
   const muiTheme = useMuiTheme();
   const isMobile = useMediaQuery(muiTheme.breakpoints.down('sm'));
