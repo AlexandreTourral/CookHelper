@@ -9,7 +9,7 @@ type collectionListProps = {
 
 export function CollectionList({ collections, collectionsList }: collectionListProps) {
   return (
-    <Box sx={{ backgroundColor: theme.palette.background.paper, borderRadius: "16px", border: "solid 1px", borderColor: theme.palette.secondary.main, marginTop: "32px", padding: "8px 16px 8px 16px" }}>
+    <Box sx={{ backgroundColor: theme.palette.background.paper, borderRadius: "8px", border: "solid 1px", borderColor: theme.palette.secondary.main, marginTop: "32px", padding: "8px 16px 8px 16px" }}>
       <Stack direction="column">
         { collections.map((collectionKey) => (
           <CollectionCard key={collectionKey} collectionKey={collectionKey} collectionsList={collectionsList} />

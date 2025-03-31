@@ -1,12 +1,10 @@
 import { Outlet } from "react-router-dom";
-import { NavBar } from "../organisms";
 import { Box } from "@mui/material";
 
 export function Layout() {
   return (
-    <Box>
-      <NavBar />
+    <Box sx={{ minHeight: '100vh' }}>
       <Outlet />
     </Box>
-  )
+  );
 }
