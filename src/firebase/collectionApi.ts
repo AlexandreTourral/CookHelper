@@ -14,7 +14,11 @@ export async function getWeekookSubCollections(): Promise<docType> {
 export class CollectionApi {
   static async getCollections() {
     const subDocs = await getWeekookSubCollections();
-    return subDocs.Collections
+    if (subDocs) {
+      return subDocs.Collections
+    } else {
+      return { key: [], "": [] }
+    }
   }
 
   static async addCollection(name: string) {
