@@ -2,6 +2,10 @@ import { Box, Collapse, IconButton, Stack, Tooltip, Typography, useMediaQuery, u
 import { theme } from "../theme";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
 import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
 import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
@@ -10,6 +14,10 @@ import MenuBookIcon from '@mui/icons-material/MenuBook';
 import CollectionsIcon from '@mui/icons-material/Collections';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import DinnerDiningIcon from '@mui/icons-material/DinnerDining';
+import SoupKitchenIcon from '@mui/icons-material/SoupKitchen';
+import CakeIcon from '@mui/icons-material/Cake';
+import GroupIcon from '@mui/icons-material/Group';
 
 const menuItems = [
   { 
@@ -39,6 +47,24 @@ const menuItems = [
   },
 ];
 
+const communauteItems = [
+  {
+    icon: <DinnerDiningIcon fontSize="small" />,
+    label: "Plats Principaux",
+    path: "/weekook/communaute/plats-principaux"
+  },
+  {
+    icon: <SoupKitchenIcon fontSize="small" />,
+    label: "Entrées",
+    path: "/weekook/communaute/entrees"
+  },
+  {
+    icon: <CakeIcon fontSize="small" />,
+    label: "Desserts",
+    path: "/weekook/communaute/desserts"
+  }
+];
+
 interface SideBarProps {
   onExpandChange?: (expanded: boolean) => void;
 }
@@ -49,12 +75,23 @@ export function SideBar({ onExpandChange }: SideBarProps) {
   const [expanded, setExpanded] = useState(true);
   const muiTheme = useMuiTheme();
   const isMobile = useMediaQuery(muiTheme.breakpoints.down('sm'));
+  const [communauteOpen, setCommunauteOpen] = useState(false);
+
+  // Vérifier si l'un des chemins de communauté est actif
+  const isCommunauteActive = communauteItems.some(item => location.pathname === item.path);
 
   useEffect(() => {
     if (isMobile) {
       setExpanded(false);
     }
   }, [isMobile]);
+
+  // Si un chemin de communauté est actif, ouvrir automatiquement le groupe
+  useEffect(() => {
+    if (isCommunauteActive) {
+      setCommunauteOpen(true);
+    }
+  }, [isCommunauteActive]);
 
   // Notify parent component when expanded state changes
   useEffect(() => {
@@ -69,6 +106,10 @@ export function SideBar({ onExpandChange }: SideBarProps) {
 
   const toggleExpand = () => {
     setExpanded(!expanded);
+  };
+
+  const toggleCommunaute = () => {
+    setCommunauteOpen(!communauteOpen);
   };
 
   // Si l'écran est mobile, on ne rend pas la sidebar fixe
@@ -140,6 +181,69 @@ export function SideBar({ onExpandChange }: SideBarProps) {
             </Box>
           );
         })}
+
+        {/* Section Communauté avec collapsible */}
+        <Box 
+          onClick={toggleCommunaute}
+          sx={{
+            cursor: "pointer",
+            borderRadius: "8px",
+            padding: "10px 12px",
+            transition: "all 0.2s ease",
+            backgroundColor: isCommunauteActive ? theme.palette.primary.main + '20' : 'transparent',
+            color: isCommunauteActive ? theme.palette.primary.main : theme.palette.text.primary,
+            '&:hover': {
+              backgroundColor: isCommunauteActive ? theme.palette.primary.main + '30' : theme.palette.primary.main + '10',
+              transform: "translateX(5px)",
+            },
+          }}
+        >
+          <Stack 
+            direction="row" 
+            spacing={2} 
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            <Stack direction="row" spacing={2} alignItems="center">
+              <Box sx={{ display: 'flex', alignItems: 'center', minWidth: '24px' }}>
+                <GroupIcon />
+              </Box>
+              {expanded && (
+                <Typography 
+                  variant="body1" 
+                  sx={{ 
+                    fontWeight: isCommunauteActive ? 600 : 400,
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  Recettes Communauté
+                </Typography>
+              )}
+            </Stack>
+            {expanded && (communauteOpen ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />)}
+          </Stack>
+        </Box>
+
+        {/* Sous-menu communauté */}
+        {expanded && (
+          <Collapse in={communauteOpen} timeout="auto" unmountOnExit>
+            <Stack spacing={0.5} sx={{ pl: 2 }}>
+              {communauteItems.map((item, index) => (
+                <ListItemButton
+                  key={index}
+                  component={Link}
+                  to={item.path}
+                  sx={getListItemStyle(item.path)}
+                >
+                  <ListItemIcon sx={{ minWidth: 40, color: "inherit" }}>
+                    {item.icon}
+                  </ListItemIcon>
+                  <ListItemText primary={item.label} />
+                </ListItemButton>
+              ))}
+            </Stack>
+          </Collapse>
+        )}
       </Stack>
 
       <Box sx={{ padding: "16px 8px", marginTop: "auto" }}>
@@ -162,4 +266,21 @@ export function SideBar({ onExpandChange }: SideBarProps) {
       </Box>
     </Box>
   );
+}
+
+function getListItemStyle(path: string) {
+  const location = useLocation();
+  const theme = useMuiTheme();
+  
+  return {
+    borderRadius: "8px",
+    padding: "8px 10px",
+    transition: "all 0.2s ease",
+    backgroundColor: location.pathname === path ? theme.palette.primary.main + '20' : 'transparent',
+    color: location.pathname === path ? theme.palette.primary.main : theme.palette.text.primary,
+    '&:hover': {
+      backgroundColor: location.pathname === path ? theme.palette.primary.main + '30' : theme.palette.primary.main + '10',
+      transform: "translateX(5px)",
+    },
+  };
 }

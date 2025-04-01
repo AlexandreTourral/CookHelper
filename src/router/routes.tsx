@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import { Layout } from "../ui/components";
-import { Collection, Dashboard, HomePage, LogInPage, Menu, Planning, Recettes, SignUpPage, Weekook } from "../ui/pages";
+import { Collection, CommunauteDesserts, CommunauteEntrees, CommunautePlatsPrincipaux, Dashboard, HomePage, LogInPage, Menu, Planning, Recettes, SignUpPage, Weekook } from "../ui/pages";
 import { collectionLoader, menuLoader, recipeLoader, weekookLoader } from "../loaders";
 
 export const router = createBrowserRouter([
@@ -53,6 +53,18 @@ export const router = createBrowserRouter([
             path: "collection",
             element: <Collection />,
             loader: collectionLoader,
+          },
+          {
+            path: "communaute/plats-principaux",
+            element: <CommunautePlatsPrincipaux />,
+          },
+          {
+            path: "communaute/entrees",
+            element: <CommunauteEntrees />,
+          },
+          {
+            path: "communaute/desserts",
+            element: <CommunauteDesserts />,
           }
         ]
       },
