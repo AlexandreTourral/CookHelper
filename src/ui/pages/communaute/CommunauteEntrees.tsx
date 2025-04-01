@@ -1,12 +1,15 @@
 import { useState } from "react";
-import { Box, Button, Card, CardContent, Grid, Rating, Typography, Dialog, DialogTitle, DialogContent, DialogActions, List, ListItem, ListItemIcon, ListItemText, Paper } from "@mui/material";
+import { Box, Button, Grid, Rating, Typography, Accordion, AccordionSummary, AccordionDetails, List, ListItem, ListItemIcon, ListItemText, Snackbar, Alert } from "@mui/material";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PersonIcon from "@mui/icons-material/Person";
 import LocalFireDepartmentIcon from "@mui/icons-material/LocalFireDepartment";
 import RestaurantIcon from "@mui/icons-material/Restaurant";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import CloseIcon from "@mui/icons-material/Close";
+import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { ingredientEnum } from "../../../type/recipeType";
+import { MenuApi } from "../../../firebase/menuApi";
+import { RecipeApi } from "../../../firebase/recipeApi";
 
 const entrees = [
   {
@@ -153,17 +156,55 @@ const entrees = [
 ];
 
 function CommunauteEntrees() {
-  const [recetteOuverte, setRecetteOuverte] = useState<number | null>(null);
+  const [expandedRecette, setExpandedRecette] = useState<number | null>(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
   
-  const ouvrirRecette = (id: number) => {
-    setRecetteOuverte(id);
+  const handleAccordionChange = (id: number) => (_: React.SyntheticEvent, isExpanded: boolean) => {
+    setExpandedRecette(isExpanded ? id : null);
   };
   
-  const fermerRecette = () => {
-    setRecetteOuverte(null);
+  const ajouterRecette = async (recette: typeof entrees[0]) => {
+    try {
+      // Conversion des ingrédients au format attendu par l'API
+      const ingredients = recette.listeIngredients.map(ingredient => {
+        // Extraction simple du nom et de la quantité à partir de la chaîne
+        const match = ingredient.match(/^([\d,\.]+)?([a-zA-Zéèêë ]+)(.*)$/);
+        if (match) {
+          const quantity = match[1] ? parseFloat(match[1].replace(',', '.')) : 1;
+          const name = match[2].trim();
+          return {
+            name,
+            quantity,
+            type: ingredientEnum.portion // Type par défaut
+          };
+        }
+        return {
+          name: ingredient,
+          quantity: 1,
+          type: ingredientEnum.portion
+        };
+      });
+      
+      // Ajouter au menu et à la recette
+      await MenuApi.addMenu(recette.titre);
+      await RecipeApi.addRecipe(ingredients, recette.titre);
+      
+      setSnackbarMessage(`${recette.titre} ajouté à votre collection`);
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+    } catch (error) {
+      console.error("Erreur lors de l'ajout:", error);
+      setSnackbarMessage("Erreur lors de l'ajout de la recette");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    }
   };
-  
-  const recetteSelectionnee = entrees.find(entree => entree.id === recetteOuverte);
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
   return (
     <Box px={4} py={3}>
@@ -176,190 +217,163 @@ function CommunauteEntrees() {
 
       <Grid container spacing={3}>
         {entrees.map((entree) => (
-          <Grid item xs={12} sm={6} md={4} key={entree.id}>
-            <Card 
-              sx={{ 
-                height: '100%', 
-                display: 'flex', 
-                flexDirection: 'column',
-                transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
-                '&:hover': {
-                  transform: 'translateY(-5px)',
-                  boxShadow: '0 8px 20px rgba(0, 0, 0, 0.12)',
+          <Grid item xs={12} sm={12} md={12} key={entree.id}>
+            <Accordion 
+              expanded={expandedRecette === entree.id}
+              onChange={handleAccordionChange(entree.id)}
+              sx={{
+                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.08)',
+                borderRadius: '12px !important',
+                overflow: 'hidden',
+                '&::before': {
+                  display: 'none',
+                },
+                '&.Mui-expanded': {
+                  margin: 0,
+                  mb: 2,
                 }
               }}
             >
-              <CardContent sx={{ flexGrow: 1 }}>
-                <Typography variant="h6" component="div" fontWeight="bold" gutterBottom>
-                  {entree.titre}
-                </Typography>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon color="primary" />}
+                aria-controls={`panel-${entree.id}-content`}
+                id={`panel-${entree.id}-header`}
+                sx={{
+                  backgroundColor: theme => theme.palette.background.paper,
+                  borderRadius: '12px',
+                  '&.Mui-expanded': {
+                    borderBottomLeftRadius: 0,
+                    borderBottomRightRadius: 0,
+                  }
+                }}
+              >
+                <Grid container alignItems="center" spacing={2}>
+                  <Grid item xs={12} sm={6}>
+                    <Typography variant="h6" fontWeight="bold">{entree.titre}</Typography>
+                    <Box display="flex" alignItems="center" mt={0.5}>
+                      <Rating value={entree.notation} precision={0.5} size="small" readOnly />
+                      <Typography variant="body2" color="text.secondary" ml={1}>
+                        ({entree.nbAvis})
+                      </Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Box display="flex" flexWrap="wrap" gap={2}>
+                      <Box display="flex" alignItems="center">
+                        <PersonIcon fontSize="small" color="action" />
+                        <Typography variant="body2" color="text.secondary" ml={1}>
+                          {entree.auteur}
+                        </Typography>
+                      </Box>
+                      <Box display="flex" alignItems="center">
+                        <AccessTimeIcon fontSize="small" color="action" />
+                        <Typography variant="body2" color="text.secondary" ml={1}>
+                          {entree.temps}
+                        </Typography>
+                      </Box>
+                      <Box display="flex" alignItems="center">
+                        <LocalFireDepartmentIcon fontSize="small" color="action" />
+                        <Typography variant="body2" color="text.secondary" ml={1}>
+                          {entree.difficulte}
+                        </Typography>
+                      </Box>
+                      <Box display="flex" alignItems="center">
+                        <RestaurantIcon fontSize="small" color="action" />
+                        <Typography variant="body2" color="text.secondary" ml={1}>
+                          {entree.ingredients} ingrédients
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Grid>
+                </Grid>
+              </AccordionSummary>
+              
+              <AccordionDetails sx={{ px: 3, py: 2, backgroundColor: theme => theme.palette.background.default }}>
+                <Grid container spacing={3}>
+                  {/* Colonne Ingrédients */}
+                  <Grid item xs={12} md={4}>
+                    <Accordion defaultExpanded sx={{ boxShadow: 'none', bgcolor: 'background.paper', borderRadius: '8px' }}>
+                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography variant="h6" fontWeight="bold" color="primary">Ingrédients</Typography>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <List dense sx={{ pl: 0 }}>
+                          {entree.listeIngredients.map((ingredient, index) => (
+                            <ListItem key={index} sx={{ px: 0 }}>
+                              <ListItemIcon sx={{ minWidth: '30px' }}>
+                                <CheckCircleOutlineIcon color="primary" fontSize="small" />
+                              </ListItemIcon>
+                              <ListItemText primary={ingredient} />
+                            </ListItem>
+                          ))}
+                        </List>
+                      </AccordionDetails>
+                    </Accordion>
+                  </Grid>
+                  
+                  {/* Colonne Préparation */}
+                  <Grid item xs={12} md={8}>
+                    <Accordion defaultExpanded sx={{ boxShadow: 'none', bgcolor: 'background.paper', borderRadius: '8px' }}>
+                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography variant="h6" fontWeight="bold" color="primary">Préparation</Typography>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <List>
+                          {entree.etapes.map((etape, index) => (
+                            <ListItem key={index} alignItems="flex-start" sx={{ px: 0, mb: 1 }}>
+                              <ListItemIcon>
+                                <Box 
+                                  sx={{ 
+                                    width: 24, 
+                                    height: 24, 
+                                    borderRadius: '50%', 
+                                    bgcolor: 'primary.main', 
+                                    color: 'white',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '14px',
+                                    fontWeight: 'bold'
+                                  }}
+                                >
+                                  {index + 1}
+                                </Box>
+                              </ListItemIcon>
+                              <ListItemText primary={etape} />
+                            </ListItem>
+                          ))}
+                        </List>
+                      </AccordionDetails>
+                    </Accordion>
+                  </Grid>
+                </Grid>
                 
-                <Box display="flex" alignItems="center" mb={1}>
-                  <PersonIcon fontSize="small" color="action" />
-                  <Typography variant="body2" color="text.secondary" ml={1}>
-                    {entree.auteur}
-                  </Typography>
+                <Box display="flex" justifyContent="flex-end" mt={2}>
+                  <Button 
+                    variant="contained" 
+                    color="primary" 
+                    startIcon={<AddToPhotosIcon />}
+                    onClick={() => ajouterRecette(entree)}
+                  >
+                    Ajouter à ma collection
+                  </Button>
                 </Box>
-                
-                <Box display="flex" alignItems="center" mb={1}>
-                  <AccessTimeIcon fontSize="small" color="action" />
-                  <Typography variant="body2" color="text.secondary" ml={1}>
-                    {entree.temps}
-                  </Typography>
-                </Box>
-                
-                <Box display="flex" alignItems="center" mb={1}>
-                  <LocalFireDepartmentIcon fontSize="small" color="action" />
-                  <Typography variant="body2" color="text.secondary" ml={1}>
-                    {entree.difficulte}
-                  </Typography>
-                </Box>
-                
-                <Box display="flex" alignItems="center" mb={1}>
-                  <RestaurantIcon fontSize="small" color="action" />
-                  <Typography variant="body2" color="text.secondary" ml={1}>
-                    {entree.ingredients} ingrédients
-                  </Typography>
-                </Box>
-                
-                <Box display="flex" alignItems="center" mb={2}>
-                  <Rating value={entree.notation} precision={0.5} size="small" readOnly />
-                  <Typography variant="body2" color="text.secondary" ml={1}>
-                    ({entree.nbAvis})
-                  </Typography>
-                </Box>
-                
-                <Paper variant="outlined" sx={{ p: 1.5, mb: 2, bgcolor: 'background.default' }}>
-                  <Typography variant="subtitle2" gutterBottom color="primary">
-                    Ingrédients principaux:
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {entree.listeIngredients.slice(0, 3).join(', ')}...
-                  </Typography>
-                </Paper>
-                
-                <Button 
-                  variant="contained" 
-                  color="primary"
-                  startIcon={<VisibilityIcon />}
-                  fullWidth
-                  onClick={() => ouvrirRecette(entree.id)}
-                >
-                  Voir la recette complète
-                </Button>
-              </CardContent>
-            </Card>
+              </AccordionDetails>
+            </Accordion>
           </Grid>
         ))}
       </Grid>
       
-      {/* Modal affichant les détails de la recette */}
-      <Dialog 
-        open={recetteOuverte !== null} 
-        onClose={fermerRecette}
-        maxWidth="md"
-        fullWidth
+      <Snackbar 
+        open={snackbarOpen} 
+        autoHideDuration={6000} 
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        {recetteSelectionnee && (
-          <>
-            <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Typography variant="h5" component="div" fontWeight="bold">
-                {recetteSelectionnee.titre}
-              </Typography>
-              <Button
-                onClick={fermerRecette}
-                color="inherit"
-                sx={{ minWidth: 'auto', p: 1 }}
-              >
-                <CloseIcon />
-              </Button>
-            </DialogTitle>
-            
-            <DialogContent dividers>
-              <Box mb={3}>
-                <Box display="flex" alignItems="center" mb={1}>
-                  <PersonIcon fontSize="small" color="primary" />
-                  <Typography variant="body1" ml={1}>
-                    Par {recetteSelectionnee.auteur}
-                  </Typography>
-                </Box>
-                
-                <Box display="flex" alignItems="center" mb={1}>
-                  <AccessTimeIcon fontSize="small" color="primary" />
-                  <Typography variant="body1" ml={1}>
-                    Temps de préparation: {recetteSelectionnee.temps}
-                  </Typography>
-                </Box>
-                
-                <Box display="flex" alignItems="center" mb={1}>
-                  <LocalFireDepartmentIcon fontSize="small" color="primary" />
-                  <Typography variant="body1" ml={1}>
-                    Difficulté: {recetteSelectionnee.difficulte}
-                  </Typography>
-                </Box>
-                
-                <Box display="flex" alignItems="center" mb={1}>
-                  <Rating value={recetteSelectionnee.notation} precision={0.5} readOnly />
-                  <Typography variant="body2" color="text.secondary" ml={1}>
-                    ({recetteSelectionnee.nbAvis} avis)
-                  </Typography>
-                </Box>
-              </Box>
-              
-              <Typography variant="h6" gutterBottom fontWeight="bold">
-                Ingrédients
-              </Typography>
-              <Box mb={3}>
-                <List dense>
-                  {recetteSelectionnee.listeIngredients.map((ingredient, index) => (
-                    <ListItem key={index}>
-                      <ListItemIcon sx={{ minWidth: '30px' }}>
-                        <CheckCircleOutlineIcon color="primary" fontSize="small" />
-                      </ListItemIcon>
-                      <ListItemText primary={ingredient} />
-                    </ListItem>
-                  ))}
-                </List>
-              </Box>
-              
-              <Typography variant="h6" gutterBottom fontWeight="bold">
-                Préparation
-              </Typography>
-              <List>
-                {recetteSelectionnee.etapes.map((etape, index) => (
-                  <ListItem key={index} alignItems="flex-start">
-                    <ListItemIcon>
-                      <Box 
-                        sx={{ 
-                          width: 24, 
-                          height: 24, 
-                          borderRadius: '50%', 
-                          bgcolor: 'primary.main', 
-                          color: 'white',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '14px',
-                          fontWeight: 'bold'
-                        }}
-                      >
-                        {index + 1}
-                      </Box>
-                    </ListItemIcon>
-                    <ListItemText primary={etape} />
-                  </ListItem>
-                ))}
-              </List>
-            </DialogContent>
-            
-            <DialogActions>
-              <Button onClick={fermerRecette} color="primary">
-                Fermer
-              </Button>
-            </DialogActions>
-          </>
-        )}
-      </Dialog>
+        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
