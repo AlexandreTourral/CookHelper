@@ -1,4 +1,4 @@
-import { Box, Stack, Grid, Typography, Fade, Container, Divider, useTheme, useMediaQuery } from "@mui/material";
+import { Box, Typography, Container } from "@mui/material";
 import { theme } from "../theme";
 import { RecettesButton } from "../atom";
 import { useLoaderData } from "react-router-dom";
@@ -27,8 +27,6 @@ export function Recettes() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredRecipes, setFilteredRecipes] = useState<string[]>(mealKey || []);
   const navigate = useNavigate();
-  const muiTheme = useTheme();
-  const isMobile = useMediaQuery(muiTheme.breakpoints.down('sm'));
 
   // Filtrer les recettes selon le terme de recherche
   useEffect(() => {
