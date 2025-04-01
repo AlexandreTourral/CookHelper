@@ -1,5 +1,5 @@
 import { Button, Typography, Box, Container, Grid, Card, CardContent, useMediaQuery, IconButton, Fade, Slide } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
 import { useState, useEffect } from "react";
 import RestaurantIcon from '@mui/icons-material/Restaurant';
@@ -8,6 +8,8 @@ import LocalGroceryStoreIcon from '@mui/icons-material/LocalGroceryStore';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { theme } from "../theme";
+import { AuthStore } from "../../store/UserStore";
+import { useObservable } from "@ngneat/react-rxjs";
 
 export function HomePage() {
   const muiTheme = useTheme();
@@ -15,6 +17,9 @@ export function HomePage() {
   const [loaded, setLoaded] = useState(false);
   const [featuresVisible, setFeaturesVisible] = useState(false);
   const [testimonialsVisible, setTestimonialsVisible] = useState(false);
+  const navigate = useNavigate();
+  const [authState] = useObservable(AuthStore);
+  const isAuthenticated = authState.user?.isConnected;
 
   useEffect(() => {
     setLoaded(true);
@@ -161,10 +166,11 @@ export function HomePage() {
                       Commencer Gratuitement
                     </Button>
                   </Link>
-                  <Link to="/LogIn" style={{ textDecoration: "none" }}>
+                  {isAuthenticated ? (
                     <Button
                       variant="outlined"
                       size="large"
+                      onClick={() => navigate('/weekook/dashboard')}
                       sx={{
                         py: 1.5,
                         px: 4,
@@ -180,9 +186,32 @@ export function HomePage() {
                         }
                       }}
                     >
-                      Se Connecter
+                      Accéder au Dashboard
                     </Button>
-                  </Link>
+                  ) : (
+                    <Link to="/LogIn" style={{ textDecoration: "none" }}>
+                      <Button
+                        variant="outlined"
+                        size="large"
+                        sx={{
+                          py: 1.5,
+                          px: 4,
+                          borderRadius: 2,
+                          fontWeight: 600,
+                          borderColor: theme.palette.primary.main,
+                          color: theme.palette.primary.main,
+                          transition: 'all 0.3s ease',
+                          '&:hover': {
+                            transform: 'translateY(-2px)',
+                            borderColor: theme.palette.primary.main,
+                            backgroundColor: 'transparent'
+                          }
+                        }}
+                      >
+                        Se Connecter
+                      </Button>
+                    </Link>
+                  )}
                 </Box>
               </Grid>
               <Grid item xs={12} md={6}>

@@ -20,9 +20,10 @@ import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import { updateAuthStore } from "../../store/UserStore";
+import { updateAuthStore, AuthStore } from "../../store/UserStore";
 import { theme } from "../theme";
 import { useTheme } from "@mui/material/styles";
+import { useObservable } from "@ngneat/react-rxjs";
 
 export function LogInPage() {
   const [email, setEmail] = useState("");
@@ -36,10 +37,16 @@ export function LogInPage() {
   const navigate = useNavigate();
   const muiTheme = useTheme();
   const isMobile = useMediaQuery(muiTheme.breakpoints.down('md'));
+  const [authState] = useObservable(AuthStore);
 
   useEffect(() => {
     setFadeIn(true);
-  }, []);
+    
+    // Rediriger vers le dashboard si l'utilisateur est déjà connecté
+    if (authState.user?.isConnected) {
+      navigate("/weekook/dashboard");
+    }
+  }, [navigate, authState.user?.isConnected]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
