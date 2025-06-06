@@ -26,7 +26,6 @@ export class MenuApi {
       await updateDoc(menuRef, {
         Menu: arrayUnion(name),
       });
-      console.log("Menu ajoutée !");
     } catch (error) {
       console.error("Erreur lors de l'ajout :", error);
     }

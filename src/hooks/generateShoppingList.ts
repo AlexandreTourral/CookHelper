@@ -17,7 +17,6 @@ export async function generateShoppingList() {
         } else {
           shoppingList[name] = { quantity, type };
         }
-        console.log('here')
       })
     }
   })

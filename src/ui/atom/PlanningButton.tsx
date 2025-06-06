@@ -15,9 +15,9 @@ export function PlanningButton() {
   const navigate = useNavigate();
   const planningStore = useObservable(PlanningStore)[0]
 
-  const handleSubmitForm = (name: string) => {
+  const handleSubmitForm = async (name: string) => {
     setModalState(false);
-    MenuApi.addMenu(name)
+    await MenuApi.addMenu(name)
     navigate(".", { replace: true });
   }
 

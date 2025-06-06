@@ -17,9 +17,9 @@ export function MenuButton() {
   const navigate = useNavigate();
   const menuStore = useObservable(MenuStore)
 
-  const handleSubmitForm = (name: string) => {
+  const handleSubmitForm = async (name: string) => {
     setModalState(false);
-    MenuApi.addMenu(name)
+    await MenuApi.addMenu(name)
     navigate(".", { replace: true });
   }
 

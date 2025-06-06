@@ -1,14 +1,17 @@
-import { arrayRemove, arrayUnion, collection, deleteField, doc, getDoc, getDocs, setDoc, updateDoc } from "firebase/firestore";
+import { arrayRemove, arrayUnion, collection, deleteField, doc, getDoc, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 import { AuthStore } from "../store";
 import { docType } from "../type/docType";
 
 export async function getWeekookSubCollections(): Promise<docType> {
-  const querySnapshot = await getDocs(collection(db, "weekook"));
-  const user = AuthStore.getValue().User
-
-  const result = querySnapshot.docs.find((document) => document.id === user?.uid);
-  return result?.data() as docType
+  return new Promise((resolve) => {
+    const user = AuthStore.getValue().User;
+    const unsubscribe = onSnapshot(collection(db, "weekook"), (querySnapshot) => {
+      const result = querySnapshot.docs.find((document) => document.id === user?.uid);
+      resolve(result?.data() as docType);
+      unsubscribe();
+    });
+  });
 }
 
 export class CollectionApi {

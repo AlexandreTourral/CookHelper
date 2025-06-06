@@ -55,7 +55,6 @@ export class PlanningApi {
       } else {
         await updateDoc(planningRef, { [`Planning.${day}`]: { lunch: "Pas de repas prévu" , diner: "Pas de repas prévu"} });
       }
-      console.log("repas modifié avec succés")
     } catch (error) {
       console.error(error);
     }
@@ -78,7 +77,6 @@ export class PlanningApi {
       } else {
         await updateDoc(planningRef, { [`Planning.${day}`]: { lunch: "Pas de repas prévu" , diner: "Pas de repas prévu"} });
       }
-      console.log("repas modifié avec succés")
     } catch (error) {
       console.error(error);
     }
