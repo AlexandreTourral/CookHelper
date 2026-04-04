@@ -134,7 +134,7 @@ export default function CalendrierPage() {
               );
             })}
           </div>
-          </div>{/* /cal-grid-wrapper */}
+          </div>
         )}
       </div>
 
@@ -295,13 +295,6 @@ function PlatPickerModal({ plats, onSelect, onClose, slot }: PlatPickerProps) {
                   (e.currentTarget as HTMLButtonElement).style.background = 'var(--color-bg-main)';
                 }}
               >
-                {plat.photoUrl ? (
-                  <img
-                    src={plat.photoUrl}
-                    alt={plat.nom}
-                    style={{ width: 44, height: 44, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }}
-                  />
-                ) : (
                   <div
                     style={{
                       width: 44, height: 44, borderRadius: 8, flexShrink: 0,
@@ -312,7 +305,6 @@ function PlatPickerModal({ plats, onSelect, onClose, slot }: PlatPickerProps) {
                   >
                     {getCategorieEmoji(plat.categorie as Categorie)}
                   </div>
-                )}
                 <div>
                   <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--color-text-main)' }}>
                     {plat.nom}
